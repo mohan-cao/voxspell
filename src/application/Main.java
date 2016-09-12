@@ -148,7 +148,6 @@ public class Main extends Application implements MainInterface {
 			currentController.setApplication(this);
 			currentController.init(data);
 			stage.show();
-			//TODO: need to finish this
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>(){
 				public void handle(WindowEvent event) {
 					if(!currentController.onExit()){
