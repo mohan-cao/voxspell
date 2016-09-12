@@ -11,13 +11,24 @@ public class MainMenuController implements SceneController{
 	@FXML private Button vStatsBtn;
 	@FXML private Button cStatsBtn;
 	@FXML private Button rMistakesBtn;
-	
+	/**
+	 * Listener for new quiz navigation button
+	 * @param e MouseEvent
+	 */
 	@FXML public void newQuiz(MouseEvent e){
 		application.requestSceneChange("quizMenu");
 	}
+	/**
+	 * Listener for Stats view navigation button
+	 * @param e MouseEvent
+	 */
 	@FXML public void viewStats(MouseEvent e){
 		application.requestSceneChange("statsMenu");
 	}
+	/**
+	 * Listener for review mistakes view navigation button
+	 * @param e MouseEvent
+	 */
 	@FXML public void reviewMistakes(MouseEvent e){
 		application.requestSceneChange("quizMenu","failed");
 	}
@@ -27,14 +38,14 @@ public class MainMenuController implements SceneController{
 	public void setApplication(MainInterface app) {
 		application = app;
 	}
-	@Override
 	public void init(String[] args) {
-		// TODO Auto-generated method stub
-		
+		// Nothing to initialise
 	}
-	@Override
 	public void cleanup() {
-		// TODO Auto-generated method stub
-		
+		// Nothing to cleanup
+	}
+	public boolean onExit() {
+		// Nothing to confirm
+		return true;
 	}
 }

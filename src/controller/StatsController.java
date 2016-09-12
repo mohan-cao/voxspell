@@ -28,10 +28,18 @@ public class StatsController implements SceneController{
 	@FXML
 	public void initialize(){
 	}
+	/**
+	 * Listener for quit to main menu navigation button
+	 * @param me MouseEvent
+	 */
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
 		application.requestSceneChange("mainMenu");
 	}
+	/**
+	 * Listener for clear statistics button
+	 * @param me
+	 */
 	@FXML
 	public void clearStats(MouseEvent me){
         Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -105,6 +113,10 @@ public class StatsController implements SceneController{
 		
 	}
 	public void cleanup() {
+	}
+	public boolean onExit() {
+		// Nothing to confirm
+		return true;
 	}
 
 }

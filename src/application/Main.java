@@ -15,10 +15,12 @@ import java.util.Map;
 
 import controller.SceneController;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import resources.StoredStats;
 
 public class Main extends Application implements MainInterface {
@@ -40,12 +42,13 @@ public class Main extends Application implements MainInterface {
 			primaryStage.setTitle("VoxSpell v0.0.1-a");
 			requestSceneChange("mainMenu");
 			primaryStage.show();
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	public void stop(){
-		currentController.cleanup();
+        currentController.cleanup();
 	}
 	
 	private void setUpStoredStats() {
@@ -145,6 +148,13 @@ public class Main extends Application implements MainInterface {
 			currentController.setApplication(this);
 			currentController.init(data);
 			stage.show();
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>(){
+				public void handle(WindowEvent event) {
+					if(!currentController.onExit()){
+						event.consume();
+					}
+				}
+			});
 			return true;
 		}
 		return false;
