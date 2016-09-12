@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-
-=======
 # VoxSpell Spelling Aid #
 
 Installation instructions:
@@ -25,4 +22,3 @@ The hierarchy sort of goes like this
 	spelling-lists.txt
 	wordlist *(to be phased out, and replaced by spelling-lists.txt)
 ```
->>>>>>> 14db27cc99cc692a1f7911e7ba2eb3a8f1a34d5f
