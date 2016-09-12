@@ -17,4 +17,9 @@ public interface SceneController {
 	 * Optional method for cleanup on application quit
 	 */
 	public void cleanup();
+	/**
+	 * Optional method for confirmation of exiting the program
+	 * @return true for exit, false for cancel
+	 */
+	public boolean onExit();
 }

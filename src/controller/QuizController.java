@@ -50,16 +50,26 @@ public class QuizController implements SceneController{
 		//init
 		wordList = new LinkedList<String>();
 	}
+	/**
+	 * Listener for quit to main menu navigation button
+	 * @param me MouseEvent
+	 */
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
 		//save and quit to main menu
 		if(wordList.size()!=0){
+			if(!onExit()){return;}
 			String testWord = wordList.get(0);
 			stats.addStat(Type.FAILED, testWord, 1);
 		}
 		saveStats();
 		application.requestSceneChange("mainMenu");
 	}
+	/**
+	 * Listener for text area key entered
+	 * Prevents enter from entering a newline character
+	 * @param ke KeyEvent from textArea
+	 */
 	@FXML
 	public void textAreaEnter(KeyEvent ke){
 		if(ke.getCode()==KeyCode.ENTER){
@@ -67,12 +77,20 @@ public class QuizController implements SceneController{
 			validateAndSubmitInput();
 		}
 	}
+	/**
+	 * Listener for text area character typed (after being typed)
+	 * @param ke KeyEvent from textArea
+	 */
 	@FXML
 	public void textAreaType(KeyEvent ke){
 		if(ke.getCharacter().matches("[^A-Za-z]")){
 			ke.consume();
 		}
 	}
+	/**
+	 * Listener for confirmation button (for marking of the word)
+	 * @param me MouseEvent
+	 */
 	@FXML
 	public void btnConfirm(MouseEvent me){
 		if(!gameEnded){
@@ -82,7 +100,9 @@ public class QuizController implements SceneController{
 			startGame(review);
 		}
 	}
-	
+	/**
+	 * Validates input before sending it to the marking algorithm
+	 */
 	private void validateAndSubmitInput(){
 		if(wordTextArea.getText().isEmpty()){
 			//prevent accidental empty string submission for user acceptance, show brief tooltip
@@ -124,7 +144,10 @@ public class QuizController implements SceneController{
 		wordTextArea.setText("");
 		wordTextArea.requestFocus();
 	}
-	
+	/**
+	 * Helper method that gets stats from the file system path
+	 * @return StoredStats
+	 */
 	private StoredStats getStatsFromFile(){
 		//find stored stats
 		Object obj = application.loadObjectFromFile(MainInterface.STATS_PATH);
@@ -132,7 +155,10 @@ public class QuizController implements SceneController{
 		if(obj instanceof StoredStats) stats = (StoredStats) obj;
 		return stats;
 	}
-	
+	/**
+	 * Gets word list from file system path
+	 * @return whether the word list has been successfully fetched to the wordList variable
+	 */
 	private boolean getWordList(){
 		try {
 			File path = new File(application.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -157,7 +183,11 @@ public class QuizController implements SceneController{
 			return false;
 		}
 	}
-	
+	/**
+	 * Creates a new process of Festival that says a word
+	 * @param speed
+	 * @param words
+	 */
 	private void sayWord(int[] speed, String... words){
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c","festival");
 		try {
@@ -324,5 +354,18 @@ public class QuizController implements SceneController{
 			stats.addStat(Type.FAILED, testWord, 1);
 		}
 		saveStats();
+	}
+	public boolean onExit() {
+		if(gameEnded){
+			return true;
+		}
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Are you sure you want to quit?");
+        alert.setContentText("You will lose progress\nIf you are in the middle of a word,\nit will be incorrect");
+        Optional<ButtonType> response = alert.showAndWait();
+        if(response.get()==ButtonType.OK){
+        	return true;
+        }
+        return false;
 	}
 }
