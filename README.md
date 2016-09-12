@@ -12,10 +12,13 @@ Compilation instructions:
 2. Place the source files under the correct package hierarchy, including the wordlist/spelling list, and other stuff
 
 The hierarchy sort of goes like this
-  /
-  	/src
-  		/application (main layout files and the Model of the MVC)
-  		/controller (controllers that take user input and process it 
-  		/resources (resources such as images, videos, audio etc, and stored statistics classes)
-  	spelling-lists.txt
-  	wordlist *(to be phased out, and replaced by spelling-lists.txt)
+
+```
+/
+	/src
+		/application (main layout files and the Model of the MVC)
+		/controller (controllers that take user input and process it 
+		/resources (resources such as images, videos, audio etc, and stored statistics classes)
+	spelling-lists.txt
+	wordlist *(to be phased out, and replaced by spelling-lists.txt)
+```
