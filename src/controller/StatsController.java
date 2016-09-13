@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 import application.MainInterface;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
@@ -116,6 +117,11 @@ public class StatsController extends SceneController{
 	public boolean onExit() {
 		// Nothing to confirm
 		return true;
+	}
+	@Override
+	public void onModelChange(Class<? extends Node> updatedPart, String fieldName) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

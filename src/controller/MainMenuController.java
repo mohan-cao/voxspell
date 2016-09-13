@@ -1,6 +1,7 @@
 package controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
@@ -33,5 +34,10 @@ public class MainMenuController extends SceneController{
 	}
 	public void init(String[] args) {
 		// Nothing to initialise
+	}
+	@Override
+	public void onModelChange(Class<? extends Node> updatedPart, String fieldName) {
+		// TODO Auto-generated method stub
+		
 	}
 }

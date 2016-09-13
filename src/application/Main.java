@@ -143,7 +143,20 @@ public class Main extends Application implements MainInterface {
 		return false;
 	}
 	public void tell() {
-		//notify currentController of changes
+		//propagate + notify currentController (view-controller) of changes
+		switch(currentController.getClass().getName()){
+		case "LevelController":
+			break;
+		case "MainMenuController":
+			break;
+		case "QuizController":
+			break;
+		case "StatsController":
+			break;
+		}
+	}
+	public void update(SceneController sc){
+		
 	}
 	
 

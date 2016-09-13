@@ -2,6 +2,7 @@ package controller;
 
 import application.MainInterface;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 
 public abstract class SceneController {
 	@FXML protected MainInterface application;
@@ -39,4 +40,8 @@ public abstract class SceneController {
 		//Once again optional
 		return true;
 	}
+	/**
+	 * Notify view of changes in the model.
+	 */
+	public abstract void onModelChange(Class<? extends Node> updatedPart, String fieldName);
 }

@@ -14,6 +14,7 @@ import java.util.Optional;
 import application.MainInterface;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -366,5 +367,10 @@ public class QuizController extends SceneController{
         	return true;
         }
         return false;
+	}
+	@Override
+	public void onModelChange(Class<? extends Node> updatedPart, String fieldName) {
+		// TODO Auto-generated method stub
+		
 	}
 }
