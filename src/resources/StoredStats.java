@@ -19,6 +19,11 @@ public class StoredStats implements Serializable{
 		public Stats(){
 			mastered=0;failed=0;faulted=0;
 		}
+		public Stats(Stats stats, Stats stats2){
+			this.mastered = stats.mastered + stats2.mastered;
+			this.faulted = stats.faulted + stats2.faulted;
+			this.failed = stats.failed + stats2.failed;
+		}
 		public void add(Type t, int i){
 			switch(t){
 			case MASTERED:
@@ -78,7 +83,17 @@ public class StoredStats implements Serializable{
 		if(stats.get(value)==null){
 			stats.put(value, new Stats());
 		}
-		stats.get(value).add(type, n);;
+		stats.get(value).add(type, n);
+	}
+	public void addStats(StoredStats other){
+		if(this.stats.keySet().equals(other.stats.keySet())){
+			for(String key : this.stats.keySet()){
+				this.stats.get(key).add(StoredStats.Type.MASTERED, other.getStat(StoredStats.Type.MASTERED,key));
+				this.stats.get(key).add(StoredStats.Type.FAULTED, other.getStat(StoredStats.Type.FAULTED,key));
+				this.stats.get(key).add(StoredStats.Type.FAILED, other.getStat(StoredStats.Type.FAILED,key));
+			}
+		}
+		
 	}
 	
 	public boolean removeKey(String key){

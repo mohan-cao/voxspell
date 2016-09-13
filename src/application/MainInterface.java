@@ -40,4 +40,9 @@ public interface MainInterface {
 	 * Resets session stats.
 	 */
 	public void resetSessionStats();
+	/**
+	 * Gets session stats.
+	 * @return
+	 */
+	public StoredStats getSessionStats();
 }
