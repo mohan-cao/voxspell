@@ -1,6 +1,8 @@
 package application;
 import java.util.Collection;
 
+import resources.StoredStats;
+
 public interface MainInterface {
 	public static final String STATS_PATH = System.getProperty("user.home")+"/.user/stats.ser";
 	/**
@@ -28,4 +30,14 @@ public interface MainInterface {
 	 * @return
 	 */
 	public boolean writeObjectToFile(String path, Object obj);
+	/**
+	 * Store stats for session. The session data will be saved upon exit.
+	 * @param stats Stats to store.
+	 * @throws Exception when trying to store null session
+	 */
+	public void storeSessionStats(StoredStats stats) throws Exception;
+	/**
+	 * Resets session stats.
+	 */
+	public void resetSessionStats();
 }

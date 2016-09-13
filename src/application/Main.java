@@ -27,6 +27,8 @@ public class Main extends Application implements MainInterface {
 	private Map<String,Scene> screens; //maps keys to scenes
 	private Map<String,FXMLLoader> screenFXMLs; //maps keys to fxmlloaders, needed to get controllers
 	private SceneController currentController; //current controller to displayed scene
+	private StoredStats sessionStats;
+	private StoredStats globalStats;
 	Stage stage;
 	
 	{
@@ -159,5 +161,11 @@ public class Main extends Application implements MainInterface {
 		}
 		return false;
 	}
-	
+	public void storeSessionStats(StoredStats stats) throws Exception {
+		if(stats==null){throw new Exception("Trying to override session stats, not allowed. Use resetSessionStats().");}
+		sessionStats = stats;
+	}
+	public void resetSessionStats(){
+		sessionStats = new StoredStats();
+	}
 }
