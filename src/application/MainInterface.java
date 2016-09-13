@@ -30,19 +30,10 @@ public interface MainInterface {
 	 * @return
 	 */
 	public boolean writeObjectToFile(String path, Object obj);
+	
 	/**
-	 * Store stats for session. The session data will be saved upon exit.
-	 * @param stats Stats to store.
-	 * @throws Exception when trying to store null session
+	 * Notifies main of a change.
+	 * Main notification then propagates to controller.
 	 */
-	public void storeSessionStats(StoredStats stats) throws Exception;
-	/**
-	 * Resets session stats.
-	 */
-	public void resetSessionStats();
-	/**
-	 * Gets session stats.
-	 * @return
-	 */
-	public StoredStats getSessionStats();
+	public void tell();
 }

@@ -27,20 +27,21 @@ public class Main extends Application implements MainInterface {
 	private Map<String,Scene> screens; //maps keys to scenes
 	private Map<String,FXMLLoader> screenFXMLs; //maps keys to fxmlloaders, needed to get controllers
 	private SceneController currentController; //current controller to displayed scene
-	private StoredStats sessionStats;
+	private StatisticsModel statsModel;
 	Stage stage;
 	
 	{
 		screens = new HashMap<String, Scene>();
 		screenFXMLs = new HashMap<String, FXMLLoader>();
+		statsModel = new StatisticsModel();
 	}
 	
 	public void start(Stage primaryStage) {
 		this.stage = primaryStage;
 		buildMainScenes();
-		setUpStoredStats();
+		statsModel.setMain(this);
 		try {
-			primaryStage.setTitle("VoxSpell v0.0.1-a");
+			primaryStage.setTitle("VoxSpell v0.0.2-b");
 			requestSceneChange("mainMenu");
 			primaryStage.show();
 			
@@ -50,21 +51,6 @@ public class Main extends Application implements MainInterface {
 	}
 	public void stop(){
         currentController.cleanup();
-	}
-	
-	private void setUpStoredStats() {
-		File file = new File(STATS_PATH);
-		if(file.exists()){return;}
-		file.getParentFile().mkdirs();
-		try {
-			FileOutputStream fo = new FileOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(fo);
-			oos.writeObject(new StoredStats());
-			oos.close();
-			fo.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public Object loadObjectFromFile(String path) {
@@ -95,10 +81,6 @@ public class Main extends Application implements MainInterface {
 			e.printStackTrace();
 		}
 		return false;
-	}
-	
-	public static void main(String[] args) {
-		launch(args);
 	}
 	
 	private void buildMainScenes(){
@@ -160,14 +142,12 @@ public class Main extends Application implements MainInterface {
 		}
 		return false;
 	}
-	public StoredStats getSessionStats(){
-		return sessionStats;
+	public void tell() {
+		//notify currentController of changes
 	}
-	public void storeSessionStats(StoredStats stats) throws Exception {
-		if(stats==null){throw new Exception("Trying to override session stats, not allowed. Use resetSessionStats().");}
-		sessionStats = stats;
-	}
-	public void resetSessionStats(){
-		sessionStats = new StoredStats();
+	
+
+	public static void main(String[] args) {
+		launch(args);
 	}
 }

@@ -19,8 +19,7 @@ import javafx.scene.input.MouseEvent;
 import resources.StoredStats;
 import resources.StoredStats.Type;
 
-public class StatsController implements SceneController{
-	@FXML private MainInterface application;
+public class StatsController extends SceneController{
     @FXML private BarChart<String, Number> barChartView;
     @FXML private Button mainMenuBtn;
     @FXML private Button clearStatsBtn;

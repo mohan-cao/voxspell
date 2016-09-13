@@ -28,8 +28,7 @@ import javafx.scene.input.MouseEvent;
 import resources.StoredStats;
 import resources.StoredStats.Type;
 
-public class QuizController implements SceneController{
-	@FXML private MainInterface application;
+public class QuizController extends SceneController{
 	@FXML private Label outputLabel;
 	@FXML private Label correctWordLabel;
 	@FXML private TextArea wordTextArea;
