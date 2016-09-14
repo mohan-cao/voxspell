@@ -12,42 +12,46 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 
+import controller.QuizController;
 import controller.SceneController;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import resources.StoredStats;
+import resources.StoredStats.Type;
 
 public class Main extends Application implements MainInterface {
 	private Map<String,Scene> screens; //maps keys to scenes
 	private Map<String,FXMLLoader> screenFXMLs; //maps keys to fxmlloaders, needed to get controllers
 	private SceneController currentController; //current controller to displayed scene
 	private StatisticsModel statsModel;
+	private Game game;
 	private Task<Void> festivalTask;
 	Stage stage;
 	
 	{
 		screens = new HashMap<String, Scene>();
 		screenFXMLs = new HashMap<String, FXMLLoader>();
-		statsModel = new StatisticsModel();
+		statsModel = new StatisticsModel(this);
+		game = new Game(this);
 	}
 	
 	public void start(Stage primaryStage) {
 		this.stage = primaryStage;
 		buildMainScenes();
-		statsModel.setMain(this);
 		try {
-			primaryStage.setTitle("VoxSpell v0.0.2-b");
+			primaryStage.setTitle("VoxSpell v0.1.3-b");
 			requestSceneChange("mainMenu");
 			primaryStage.show();
 			
@@ -139,7 +143,7 @@ public class Main extends Application implements MainInterface {
 			stage.show();
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>(){
 				public void handle(WindowEvent event) {
-					if(!currentController.onExit()){
+					if(!game.onExit()){
 						event.consume();
 					}
 				}
@@ -148,18 +152,9 @@ public class Main extends Application implements MainInterface {
 		}
 		return false;
 	}
-	public void tell() {
+	public void tell(String message) {
 		//propagate + notify currentController (view-controller) of changes
-		switch(currentController.getClass().getName()){
-		case "LevelController":
-			break;
-		case "MainMenuController":
-			break;
-		case "QuizController":
-			break;
-		case "StatsController":
-			break;
-		}
+		currentController.onModelChange(message);
 	}
 	/**
 	 * Creates a new process of Festival that says a word
@@ -200,10 +195,41 @@ public class Main extends Application implements MainInterface {
 	}
 	/**
 	 * Called by scene controller to update the main application
+	 * Current messages supported:
+	 * "exitController" - called when controller exits
 	 * @param sc
 	 */
-	public void update(SceneController sc){
+	public void update(SceneController sc, String message){
 		//TODO
+		if(sc instanceof QuizController){
+			QuizController qc = (QuizController)sc;
+			switch(message){
+			case "quitToMainMenu_onClick":
+				if(game!=null&&game.isGameEnded()){
+					if(!game.onExit()){return;}
+					String testWord = game.wordList().get(0); 
+					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1);
+				}
+				game.saveStats();
+				break;
+			case "confirm_onClick":
+				if(game!=null&&!game.isGameEnded()){
+					qc.validateAndSubmitInput();
+				}else{
+					game.saveStats();
+					game.startGame();
+				}
+				break;
+			case "newGame":
+				//find stored stats
+				game.wordList() = new LinkedList<String>();
+				if(args!=null && args.length>0 && args[0].equals("failed")){
+					startGame(true);
+				}else{
+					startGame(false);
+				}
+			}
+		}
 	}
 	
 

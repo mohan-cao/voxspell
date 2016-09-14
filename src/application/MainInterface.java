@@ -1,7 +1,7 @@
 package application;
 import java.util.Collection;
 
-import resources.StoredStats;
+import controller.SceneController;
 
 public interface MainInterface {
 	public static final String STATS_PATH = System.getProperty("user.home")+"/.user/stats.ser";
@@ -32,10 +32,15 @@ public interface MainInterface {
 	public boolean writeObjectToFile(String path, Object obj);
 	
 	/**
-	 * Notifies main of a change.
-	 * Main notification then propagates to controller.
+	 * Notifies main for update
+	 * @param sc SceneController that has changed
 	 */
-	public void tell();
+	public void update(SceneController sc, String msg);
+	/**
+	 * Notifies current controller of update with message.
+	 * @param msg
+	 */
+	public void tell(String msg);
 	/**
 	 * Says word in festival
 	 * @param is Sequence of speeds

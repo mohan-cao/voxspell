@@ -1,8 +1,11 @@
 package controller;
 
+import java.lang.reflect.Method;
+
 import application.MainInterface;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 
 public abstract class SceneController {
 	@FXML protected MainInterface application;
@@ -34,14 +37,12 @@ public abstract class SceneController {
 	/**
 	 * Optional method for confirmation of exiting the program
 	 * Model calls this to update view to tell it to finalize any changes before exiting
-	 * @return true for exit, false for cancel
 	 */
-	public boolean onExit(){
+	public void onExit(){
 		//Once again optional
-		return true;
 	}
 	/**
 	 * Notify view of changes in the model.
 	 */
-	public abstract void onModelChange(Class<? extends Node> updatedPart, String fieldName);
+	public abstract void onModelChange(String fieldName);
 }

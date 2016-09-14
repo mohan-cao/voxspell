@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -36,8 +39,6 @@ public class QuizController extends SceneController{
 	@FXML private Button confirm;
 	@FXML private ProgressBar progress;
 	
-	
-	
 	@FXML
 	public void initialize(){
 	}
@@ -48,12 +49,13 @@ public class QuizController extends SceneController{
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
 		//save and quit to main menu
-		if(application.){
+		/*if(wordList.size()!=0){
 			if(!onExit()){return;}
 			String testWord = wordList.get(0);
 			stats.addStat(Type.FAILED, testWord, 1);
 		}
-		saveStats();
+		saveStats();*/
+		application.update(this, "quitToMainMenu_onClick");
 		application.requestSceneChange("mainMenu");
 	}
 	/**
@@ -84,17 +86,19 @@ public class QuizController extends SceneController{
 	 */
 	@FXML
 	public void btnConfirm(MouseEvent me){
-		if(!gameEnded){
+		//send control signal to game to submit input,
+		/*if(!gameEnded){
 			validateAndSubmitInput();
 		}else{
 			saveStats();
 			startGame(review);
-		}
+		}*/
+		application.update(this, "btnConfirm_onClick");
 	}
 	/**
 	 * Validates input before sending it to the marking algorithm
 	 */
-	private void validateAndSubmitInput(){
+	public void validateAndSubmitInput(){
 		if(wordTextArea.getText().isEmpty()){
 			//prevent accidental empty string submission for user acceptance, show brief tooltip
 			Tooltip tip = new Tooltip("Please enter a word!");
@@ -131,58 +135,10 @@ public class QuizController extends SceneController{
 			}).start();
 			return;
 		}
-		submitWord(wordTextArea.getText());
+		application.update(this, "submitWord");
 		wordTextArea.setText("");
 		wordTextArea.requestFocus();
 	}
-	/**
-	 * Helper method that gets stats from the file system path
-	 * @return StoredStats
-	 */
-	private StoredStats getStatsFromFile(){
-		//find stored stats
-		Object obj = application.loadObjectFromFile(MainInterface.STATS_PATH);
-		StoredStats stats = null;
-		if(obj instanceof StoredStats) stats = (StoredStats) obj;
-		return stats;
-	}
-	/**
-	 * Gets word list from file system path
-	 * @return whether the word list has been successfully fetched to the wordList variable
-	 */
-	private boolean getWordList(){
-		try {
-			File path = new File(application.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-			File file = new File(path.getParent()+"/wordlist");
-			if(!file.exists()){
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setContentText("You don't have a word list!\nPlease put one in the folder that you ran the spelling app from.");
-				alert.showAndWait();
-				return false;
-			}
-			FileReader fi = new FileReader(file);
-			BufferedReader br = new BufferedReader(fi);
-			String line = null;
-			while((line= br.readLine())!=null){
-				wordList.add(line);
-			}
-			Collections.shuffle(wordList);
-			br.close();
-			return true;
-		} catch (IOException | URISyntaxException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-	
-	
-	/**
-	 * Saves statistics
-	 */
-	private void saveStats(){
-		application.writeObjectToFile(MainInterface.STATS_PATH, stats);
-	}
-	
 	public void setApplication(MainInterface app) {
 		application = app;
 	}
@@ -191,82 +147,25 @@ public class QuizController extends SceneController{
 	 * 
 	 */
 	public void init(String[] args) {
-		//find stored stats
-		wordList = new LinkedList<String>();
-		if(args!=null && args.length>0 && args[0].equals("failed")){
-			startGame(true);
-		}else{
-			startGame(false);
-		}
-	}
-	/**
-	 * Starts the game with option for practice mode (review)
-	 * @param practice review -> true
-	 */
-	private void startGame(boolean practice){
-		gameEnded=false;
-		stats = getStatsFromFile();
-		if(stats==null){
-			stats = new StoredStats();
-		}
-		wordTextArea.setDisable(false);
-		confirm.setText("Check");		
-		wordTextArea.requestFocus();
-		outputLabel.setText("Quiz start!");
-		correctWordLabel.setText("Please spell the spoken words");
-		review=false; //assume not reviewing words
-		if(practice){
-			wordList.addAll(stats.getKeys(Type.FAILED));
-			if(wordList.size()==0){
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("");
-				alert.setHeaderText("No words to review");
-				alert.setContentText("You haven't any words to review!\nDo a spelling quiz first.");
-				Optional<ButtonType> response = alert.showAndWait();
-				if(response.get()==ButtonType.OK){
-					quitToMainMenu(null);
-				}
-				return;
-			}
-			Collections.shuffle(wordList);
-			review=true; //reviewing words
-		}else{
-			getWordList();
-		}
-		if(!wordList.isEmpty()){
-				wordList = wordList.subList(0, (wordList.size()>=3)?3:wordList.size());
-				application.sayWord(new int[]{1},wordList.get(0));
-		}
-		//set faulted=false for first word
-		progress.setProgress(0);
-		wordListSize=(wordList.size()!=0)?wordList.size():1;
-		faulted=false;
+		application.update(this, "newGame");
 	}
 	
 	public void cleanup() {
 		//save and quit
-		if(wordList.size()!=0){
+		if(!gameEnded){
 			String testWord = wordList.get(0);
 			stats.addStat(Type.FAILED, testWord, 1);
 		}
 		saveStats();
 	}
-	public boolean onExit() {
-		if(gameEnded){
-			return true;
-		}
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Are you sure you want to quit?");
-        alert.setContentText("You will lose progress\nIf you are in the middle of a word,\nit will be incorrect");
-        Optional<ButtonType> response = alert.showAndWait();
-        if(response.get()==ButtonType.OK){
-        	return true;
-        }
-        return false;
-	}
 	@Override
-	public void onModelChange(Class<? extends Node> updatedPart, String fieldName) {
-		// TODO Auto-generated method stub
-		
+	public void onModelChange(String signal) {
+		if(signal.equals("gameStartConfigure")){
+			wordTextArea.setDisable(false);
+			confirm.setText("Check");		
+			wordTextArea.requestFocus();
+			outputLabel.setText("Quiz start!");
+			correctWordLabel.setText("Please spell the spoken words");
+		}
 	}
 }
