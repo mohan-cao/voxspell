@@ -15,7 +15,7 @@ public class LevelController extends SceneController {
 
 	}
 	@Override
-	public void onModelChange(Class<? extends Node> updatedPart, String fieldName) {
+	public void onModelChange(String fieldName) {
 		// TODO Auto-generated method stub
 		
 	}

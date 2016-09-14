@@ -44,7 +44,6 @@ public class Main extends Application implements MainInterface {
 		screens = new HashMap<String, Scene>();
 		screenFXMLs = new HashMap<String, FXMLLoader>();
 		statsModel = new StatisticsModel(this);
-		game = new Game(this);
 	}
 	
 	public void start(Stage primaryStage) {
@@ -143,7 +142,7 @@ public class Main extends Application implements MainInterface {
 			stage.show();
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>(){
 				public void handle(WindowEvent event) {
-					if(!game.onExit()){
+					if(game!=null&&!game.onExit()){
 						event.consume();
 					}
 				}
@@ -221,13 +220,26 @@ public class Main extends Application implements MainInterface {
 				}
 				break;
 			case "newGame":
-				//find stored stats
-				game.wordList() = new LinkedList<String>();
-				if(args!=null && args.length>0 && args[0].equals("failed")){
-					startGame(true);
-				}else{
-					startGame(false);
+				//make new game, start it
+				game = new Game(this);
+				game.startGame(false);
+				break;
+			case "reviewGame":
+				game = new Game(this);
+				game.startGame(true);
+				break;
+			case "submitWord":
+				game.submitWord(qc.getTextAreaInput());
+				break;
+			case "cleanup":
+				//save and quit
+				if(!game.isGameEnded()){
+					String testWord = game.wordList().get(0);
+					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1);
 				}
+				game.saveStats();
+				game = null;
+				break;
 			}
 		}
 	}

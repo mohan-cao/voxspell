@@ -112,14 +112,8 @@ public class StatsController extends SceneController{
 		}
 		
 	}
-	public void cleanup() {
-	}
-	public boolean onExit() {
-		// Nothing to confirm
-		return true;
-	}
 	@Override
-	public void onModelChange(Class<? extends Node> updatedPart, String fieldName) {
+	public void onModelChange(String fieldName) {
 		// TODO Auto-generated method stub
 		
 	}

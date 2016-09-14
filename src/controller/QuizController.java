@@ -147,25 +147,54 @@ public class QuizController extends SceneController{
 	 * 
 	 */
 	public void init(String[] args) {
-		application.update(this, "newGame");
+		if(args!=null && args.length>0 && args[0].equals("failed")){
+			application.update(this, "reviewGame");
+		}else{
+			application.update(this, "newGame");
+		}
+		
+	}
+	
+	public String getTextAreaInput(){
+		return wordTextArea.getText();
 	}
 	
 	public void cleanup() {
-		//save and quit
-		if(!gameEnded){
-			String testWord = wordList.get(0);
-			stats.addStat(Type.FAILED, testWord, 1);
-		}
-		saveStats();
+		application.update(this, "cleanup");
 	}
 	@Override
 	public void onModelChange(String signal) {
-		if(signal.equals("gameStartConfigure")){
+		switch(signal){
+		case "gameStartConfigure":
 			wordTextArea.setDisable(false);
 			confirm.setText("Check");		
 			wordTextArea.requestFocus();
 			outputLabel.setText("Quiz start!");
 			correctWordLabel.setText("Please spell the spoken words");
+			break;
+		case "resetGame":
+			wordTextArea.setDisable(true);
+			confirm.setText("Restart?");
+			break;
+		}
+		if(signal.contains("masteredWord=")){
+			outputLabel.setText("Well done");
+			correctWordLabel.setText("Correct, the word is "+signal.split("masteredWord=")[1]);
+			progress.setStyle("-fx-accent: lightgreen;");
+		}else if(signal.contains("faultedWord=")){
+			outputLabel.setText("Try again!");
+			correctWordLabel.setText("Sorry, that wasn't quite right");
+			progress.setStyle("-fx-accent: #ffbf44;");
+		}else if(signal.contains("failedWord=")){
+			outputLabel.setText("Incorrect");
+			correctWordLabel.setText("The word was "+signal.split("failedWord=")[1]);
+			progress.setStyle("-fx-accent: orangered;");
+		}else if(signal.contains("lastChanceWord=")){
+			outputLabel.setText("Last try!");
+			correctWordLabel.setText("Let's slow it down...");
+			progress.setStyle("-fx-accent: #ffbf44;");
+		}else if(signal.contains("setProgress=")){
+			progress.setProgress(Double.parseDouble(signal.split("setProgress=")[1]));
 		}
 	}
 }
