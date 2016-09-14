@@ -36,4 +36,10 @@ public interface MainInterface {
 	 * Main notification then propagates to controller.
 	 */
 	public void tell();
+	/**
+	 * Says word in festival
+	 * @param is Sequence of speeds
+	 * @param string Sequence of strings
+	 */
+	public void sayWord(int[] is, String... string);
 }

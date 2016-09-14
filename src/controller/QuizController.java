@@ -35,20 +35,11 @@ public class QuizController extends SceneController{
 	@FXML private TextArea wordTextArea;
 	@FXML private Button confirm;
 	@FXML private ProgressBar progress;
-	@FXML private List<String> wordList;
-	@FXML private boolean faulted;
-	@FXML private boolean prevFaulted;
-	@FXML private int wordListSize;
-	@FXML private StoredStats stats;
-	@FXML private Task<Void> festivalTask;
-	@FXML private boolean review;
-	@FXML private boolean gameEnded;
+	
 	
 	
 	@FXML
 	public void initialize(){
-		//init
-		wordList = new LinkedList<String>();
 	}
 	/**
 	 * Listener for quit to main menu navigation button
@@ -57,7 +48,7 @@ public class QuizController extends SceneController{
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
 		//save and quit to main menu
-		if(wordList.size()!=0){
+		if(application.){
 			if(!onExit()){return;}
 			String testWord = wordList.get(0);
 			stats.addStat(Type.FAILED, testWord, 1);
@@ -183,103 +174,8 @@ public class QuizController extends SceneController{
 			return false;
 		}
 	}
-	/**
-	 * Creates a new process of Festival that says a word
-	 * @param speed
-	 * @param words
-	 */
-	private void sayWord(int[] speed, String... words){
-		ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c","festival");
-		try {
-			if(festivalTask!=null){
-				festivalTask.cancel(true);
-			}
-			Process process = pb.start();
-			PrintWriter pw = new PrintWriter(process.getOutputStream());
-			for(int i=0;i<words.length;i++){
-				if(i<speed.length){
-					pw.println("(Parameter.set 'Duration_Stretch "+speed[i]+")");
-				}
-				pw.println("(SayText \""+words[i]+"\")");
-			}
-			pw.println("(quit)");
-			pw.close();
-			festivalTask = new Task<Void>(){
-				@Override
-				protected Void call() throws Exception {
-					process.waitFor();
-					return null;
-				}
-			};
-			new Thread(festivalTask).start();
-			
-		} catch (IOException e) {
-			//couldn't find festival
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setContentText("You don't have Festival, the Text to Speech synthesiser required for this to work");
-			alert.showAndWait();
-		}
-	}
-	/**
-	 * Check word against game logic
-	 * @param word
-	 */
-	private void submitWord(String word){
-		if(!wordList.isEmpty()){
-			int speed = 1;
-			boolean prev2Faulted = prevFaulted;
-			prevFaulted = faulted;
-			String testWord = wordList.get(0);
-			faulted=!word.toLowerCase().equals(testWord.toLowerCase());
-			if(!faulted&&!prevFaulted){
-				//mastered
-				outputLabel.setText("Well done");
-				correctWordLabel.setText("Correct, the word is "+testWord);
-				progress.setStyle("-fx-accent: lightgreen;");
-				faulted=false;
-				stats.addStat(Type.MASTERED,testWord, 1);
-				// if review, remove from failedlist
-				stats.setStats(Type.FAILED, testWord, 0);
-				wordList.remove(0);
-			}else if(faulted&&!prevFaulted){
-				//faulted once => set faulted
-				outputLabel.setText("Try again!");
-				correctWordLabel.setText("Sorry, that wasn't quite right");
-				progress.setStyle("-fx-accent: #ffbf44;");
-				speed = 2;
-			}else if(!faulted&&prevFaulted){
-				//correct after faulted => store faulted
-				outputLabel.setText("Well done");
-				correctWordLabel.setText("Correct, the word is "+testWord);
-				progress.setStyle("-fx-accent: lightgreen;");
-				stats.addStat(Type.FAULTED,testWord, 1);
-				wordList.remove(0);
-			}else if(review&&!prev2Faulted){
-				//give one more chance in review, set speed to very slow
-				outputLabel.setText("Last try!");
-				correctWordLabel.setText("Let's slow it down...");
-				progress.setStyle("-fx-accent: #ffbf44;");
-				speed = 3;
-			}else{
-				//faulted twice => failed
-				outputLabel.setText("Incorrect");
-				correctWordLabel.setText("The word was "+testWord);
-				progress.setStyle("-fx-accent: orangered;");
-				faulted=false;
-				stats.addStat(Type.FAILED, testWord, 1);
-				wordList.remove(0);
-			}
-			if(wordList.size()!=0){
-				sayWord(new int[]{speed},wordList.get(0));
-			}else{
-				wordTextArea.setDisable(true);
-				confirm.setText("Restart?");
-				gameEnded=true;
-			}
-			//set progressbars for progress through quiz and also denote additional separation for faulted words
-			progress.setProgress((wordListSize-wordList.size()+((faulted)?0.5:0))/(double)wordListSize);
-		}
-	}
+	
+	
 	/**
 	 * Saves statistics
 	 */
@@ -339,7 +235,7 @@ public class QuizController extends SceneController{
 		}
 		if(!wordList.isEmpty()){
 				wordList = wordList.subList(0, (wordList.size()>=3)?3:wordList.size());
-				sayWord(new int[]{1},wordList.get(0));
+				application.sayWord(new int[]{1},wordList.get(0));
 		}
 		//set faulted=false for first word
 		progress.setProgress(0);

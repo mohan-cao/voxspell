@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,10 +16,14 @@ import java.util.Map;
 
 import controller.SceneController;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import resources.StoredStats;
@@ -28,6 +33,7 @@ public class Main extends Application implements MainInterface {
 	private Map<String,FXMLLoader> screenFXMLs; //maps keys to fxmlloaders, needed to get controllers
 	private SceneController currentController; //current controller to displayed scene
 	private StatisticsModel statsModel;
+	private Task<Void> festivalTask;
 	Stage stage;
 	
 	{
@@ -155,8 +161,49 @@ public class Main extends Application implements MainInterface {
 			break;
 		}
 	}
+	/**
+	 * Creates a new process of Festival that says a word
+	 * @param speed
+	 * @param words
+	 */
+	public void sayWord(int[] speed, String... words){
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c","festival");
+		try {
+			if(festivalTask!=null){
+				festivalTask.cancel(true);
+			}
+			Process process = pb.start();
+			PrintWriter pw = new PrintWriter(process.getOutputStream());
+			for(int i=0;i<words.length;i++){
+				if(i<speed.length){
+					pw.println("(Parameter.set 'Duration_Stretch "+speed[i]+")");
+				}
+				pw.println("(SayText \""+words[i]+"\")");
+			}
+			pw.println("(quit)");
+			pw.close();
+			festivalTask = new Task<Void>(){
+				@Override
+				protected Void call() throws Exception {
+					process.waitFor();
+					return null;
+				}
+			};
+			new Thread(festivalTask).start();
+			
+		} catch (IOException e) {
+			//couldn't find festival
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setContentText("You don't have Festival, the Text to Speech synthesiser required for this to work");
+			alert.showAndWait();
+		}
+	}
+	/**
+	 * Called by scene controller to update the main application
+	 * @param sc
+	 */
 	public void update(SceneController sc){
-		
+		//TODO
 	}
 	
 

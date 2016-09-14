@@ -97,4 +97,5 @@ public class StatisticsModel {
 	public void setMain(MainInterface main){
 		application = main;
 	}
+	
 }
