@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 import controller.QuizController;
 import controller.SceneController;
 import controller.StatsController;
+import controller.VideoController;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
@@ -26,6 +27,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.media.Media;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import resources.StoredStats;
@@ -265,6 +267,14 @@ public class Main extends Application implements MainInterface {
 				break;
 			case "requestSessionStats":
 				sc.onModelChange("sessionStatsLoaded", statsModel.getSessionStats());
+				break;
+			}
+		}else if(sc instanceof VideoController){
+			switch(message){
+			case "requestVideo":
+				URL url = getClass().getClassLoader().getResource("resources/Gandalf Europop Nod.mp4");
+				Media media = new Media(url.toString());
+				sc.onModelChange("videoReady", media);
 				break;
 			}
 		}
