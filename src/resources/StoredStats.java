@@ -86,14 +86,11 @@ public class StoredStats implements Serializable{
 		stats.get(value).add(type, n);
 	}
 	public void addStats(StoredStats other){
-		if(this.stats.keySet().equals(other.stats.keySet())){
-			for(String key : this.stats.keySet()){
-				this.stats.get(key).add(StoredStats.Type.MASTERED, other.getStat(StoredStats.Type.MASTERED,key));
-				this.stats.get(key).add(StoredStats.Type.FAULTED, other.getStat(StoredStats.Type.FAULTED,key));
-				this.stats.get(key).add(StoredStats.Type.FAILED, other.getStat(StoredStats.Type.FAILED,key));
-			}
+		for(String key : other.getKeys()){
+			this.addStat(Type.MASTERED, key, other.getStat(Type.MASTERED, key));
+			this.addStat(Type.FAULTED, key, other.getStat(Type.FAULTED, key));
+			this.addStat(Type.FAILED, key, other.getStat(Type.FAILED, key));
 		}
-		
 	}
 	
 	public boolean removeKey(String key){

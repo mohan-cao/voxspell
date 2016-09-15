@@ -13,7 +13,10 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+<<<<<<< HEAD
+=======
 import java.util.concurrent.ExecutionException;
+>>>>>>> e63e953af79574885367b7fa398f260274db2c03
 
 import controller.QuizController;
 import controller.SceneController;
@@ -270,7 +273,6 @@ public class Main extends Application implements MainInterface {
 		}
 	}
 	
-
 	public static void main(String[] args) {
 		launch(args);
 	}

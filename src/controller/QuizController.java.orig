@@ -1,5 +1,10 @@
 package controller;
 
+<<<<<<< HEAD
+
+import application.MainInterface;
+=======
+>>>>>>> e63e953af79574885367b7fa398f260274db2c03
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
