@@ -148,7 +148,7 @@ public class Game {
 				faulted=false;
 				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1);
 				// if review, remove from failedlist
-				stats.getSessionStats().setStats(Type.FAILED, testWord, 0);
+				stats.getGlobalStats().setStats(Type.FAILED, testWord, 0);
 				wordList.remove(0);
 			}else if(faulted&&!prevFaulted){
 				//faulted once => set faulted

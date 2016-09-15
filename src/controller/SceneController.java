@@ -31,16 +31,12 @@ public abstract class SceneController {
 	 * Optional method for cleanup on application quit
 	 * Model calls this to update view to tell it to clean up garbage
 	 */
-	public void cleanup(){
-		//Optional override
-	}
+	public abstract void cleanup();
 	/**
 	 * Optional method for confirmation of exiting the program
 	 * Model calls this to update view to tell it to finalize any changes before exiting
 	 */
-	public void onExit(){
-		//Once again optional
-	}
+	public abstract void onExit();
 	/**
 	 * Notify view of changes in the model.
 	 */

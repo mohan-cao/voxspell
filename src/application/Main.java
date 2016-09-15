@@ -31,6 +31,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import resources.StoredStats;
 import resources.StoredStats.Type;
 
 public class Main extends Application implements MainInterface {
@@ -164,7 +165,7 @@ public class Main extends Application implements MainInterface {
 	 * @param words
 	 */
 	public void sayWord(int[] speed, String... words){
-		ProcessBuilder pb = new ProcessBuilder("/bin/bash -c", "festival");
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c", "festival");
 		try {
 			if(festivalTask!=null){
 				festivalTask.cancel(true);
@@ -184,7 +185,7 @@ public class Main extends Application implements MainInterface {
 				protected Integer call() throws Exception {
 					return process.waitFor();
 				}
-				public void done(){
+				public void succeeded(){
 					try {
 						if(get()!=0){
 							//couldn't find festival

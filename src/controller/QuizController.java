@@ -138,9 +138,6 @@ public class QuizController extends SceneController{
 		wordTextArea.setText("");
 		wordTextArea.requestFocus();
 	}
-	public void setApplication(MainInterface app) {
-		application = app;
-	}
 	/**
 	 * Called when Application model notifies controller-view of view change
 	 * 
@@ -195,5 +192,10 @@ public class QuizController extends SceneController{
 		}else if(signal.contains("setProgress=")){
 			progress.setProgress(Double.parseDouble(signal.split("setProgress=")[1]));
 		}
+	}
+	@Override
+	public void onExit() {
+		// TODO Auto-generated method stub
+		
 	}
 }
