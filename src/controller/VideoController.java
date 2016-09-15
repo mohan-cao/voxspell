@@ -1,10 +1,13 @@
 package controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import application.MainInterface;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.media.MediaView;
@@ -37,7 +40,7 @@ public class VideoController extends SceneController {
 		if (mediaPlayer != null){
 			killMediaPlayer();
 		}
-		application.requestsSceneChange("mainMenu");
+		application.requestSceneChange("mainMenu");
 	}
 
 	/**
@@ -50,7 +53,7 @@ public class VideoController extends SceneController {
 	}
 	
 	private void killMediaPlayer(){
-		mediaPLayer.stop();
+		mediaPlayer.stop();
 		mediaPlayer = null;
 	}
 
@@ -63,7 +66,7 @@ public class VideoController extends SceneController {
 			killMediaPlayer();
 		}
 		String source = "resources/Gandalf Europop Nod.mp4"; //FIXME
-		Media media = new Media(source)
+		Media media = new Media(source);
 		MediaPlayer mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.setAutoPlay(true);
 		videoView.setMediaPlayer(mediaPlayer);
@@ -83,9 +86,8 @@ public class VideoController extends SceneController {
 		// Optional override
 	}
 
-	public boolean onExit() {
+	public void onExit() {
 		// Once again optional
-		return true;
 	}
 
 	/**
@@ -93,5 +95,11 @@ public class VideoController extends SceneController {
 	 */
 	public void onModelChange(Class<? extends Node> updatedPart, String fieldName) {
 
+	}
+
+	@Override
+	public void onModelChange(String fieldName) {
+		// TODO Auto-generated method stub
+		
 	}
 }
