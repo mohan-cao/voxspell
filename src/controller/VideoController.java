@@ -58,14 +58,23 @@ public class VideoController extends SceneController {
 	 */
 	@FXML
 	public void initialize() {
-		if (mediaPlayer != null){
+		// TODO
+		// here's some hints as to how to approach the MVC pattern:
+		// - controller updates model on changes that occurred (namely, in this case, an initialization occurred)
+		// - model updates view with new data, namely the Media source which is loaded.
+		
+		// The video controller acts as both a controller and a view as it has both "update" components
+		// and "listener" components
+		
+		/*if (mediaPlayer != null){
 			killMediaPlayer();
 		}
-		String source = "resources/Gandalf Europop Nod.mp4"; //FIXME
+		String source = "../resources/Gandalf%20Europop%20Nod.mp4"; //FIXME
 		Media media = new Media(source);
 		MediaPlayer mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.setAutoPlay(true);
-		videoView.setMediaPlayer(mediaPlayer);
+		videoView.setMediaPlayer(mediaPlayer);*/
+		application.update(this, "requestVideo");
 		
 	}
 
@@ -86,16 +95,17 @@ public class VideoController extends SceneController {
 		// Once again optional
 	}
 
-	/**
-	 * Notify view of changes in the model.
-	 */
-	public void onModelChange(Class<? extends Node> updatedPart, String fieldName) {
-
-	}
-
 	@Override
-	public void onModelChange(String fieldName) {
-		// TODO Auto-generated method stub
+	public void onModelChange(String notificationString, Object... objectsParameters) {
+		// Model has changed (video is now ready), so components need to be loaded
+		switch(notificationString){
+		case "videoReady":
+			Media media = (Media) objectsParameters[0];
+			MediaPlayer mediaPlayer = new MediaPlayer(media);
+			mediaPlayer.setAutoPlay(true);
+			videoView.setMediaPlayer(mediaPlayer);
+			break;
+		}
 		
 	}
 }
