@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutionException;
 import application.MainInterface;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;

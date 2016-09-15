@@ -12,9 +12,8 @@ import java.util.Optional;
 
 import controller.QuizController;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
-import resources.StoredStats;
+import javafx.scene.control.ButtonType;
 import resources.StoredStats.Type;
 
 public class Game {

@@ -12,26 +12,22 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import controller.QuizController;
 import controller.SceneController;
+import controller.StatsController;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import resources.StoredStats;
 import resources.StoredStats.Type;
 
 public class Main extends Application implements MainInterface {
@@ -254,6 +250,8 @@ public class Main extends Application implements MainInterface {
 				game = null;
 				break;
 			}
+		}else if(sc instanceof StatsController){
+			
 		}
 	}
 	
