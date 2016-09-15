@@ -60,7 +60,7 @@ public class VideoController extends SceneController {
 	@FXML
 	public void initialize() {
 		if (mediaPlayer != null){
-			resetMediaPlayer();
+			killMediaPlayer();
 		}
 		String source = "resources/Gandalf Europop Nod.mp4"; //FIXME
 		Media media = new Media(source)
