@@ -28,18 +28,22 @@ public class StatisticsModel {
 	 * @param main Main interface
 	 */
 	public StatisticsModel(MainInterface main) {
+		//initiate session stats and main interface
+		sessionStats = new StoredStats();
+		application = main;
 		//create new stats file if it does not exist
 		File file = new File(STATS_PATH);
-		if(file.exists()){return;}
-		file.getParentFile().mkdirs();
-		try {
-			FileOutputStream fo = new FileOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(fo);
-			oos.writeObject(new StoredStats());
-			oos.close();
-			fo.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(!file.exists()){
+			file.getParentFile().mkdirs();
+			try {
+				FileOutputStream fo = new FileOutputStream(file);
+				ObjectOutputStream oos = new ObjectOutputStream(fo);
+				oos.writeObject(new StoredStats());
+				oos.close();
+				fo.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		//load global stats using the application model if possible
 		if(main!=null){

@@ -15,10 +15,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import controller.QuizController;
 import controller.SceneController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -37,7 +39,7 @@ public class Main extends Application implements MainInterface {
 	private SceneController currentController; //current controller to displayed scene
 	private StatisticsModel statsModel;
 	private Game game;
-	private Task<Void> festivalTask;
+	private Task<Integer> festivalTask;
 	Stage stage;
 	
 	{
@@ -60,6 +62,7 @@ public class Main extends Application implements MainInterface {
 	}
 	public void stop(){
         currentController.cleanup();
+        statsModel.sessionEnd();
 	}
 
 	public Object loadObjectFromFile(String path) {
@@ -161,7 +164,7 @@ public class Main extends Application implements MainInterface {
 	 * @param words
 	 */
 	public void sayWord(int[] speed, String... words){
-		ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c","festival");
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash -c", "festival");
 		try {
 			if(festivalTask!=null){
 				festivalTask.cancel(true);
@@ -176,26 +179,36 @@ public class Main extends Application implements MainInterface {
 			}
 			pw.println("(quit)");
 			pw.close();
-			festivalTask = new Task<Void>(){
+			festivalTask = new Task<Integer>(){
 				@Override
-				protected Void call() throws Exception {
-					process.waitFor();
-					return null;
+				protected Integer call() throws Exception {
+					return process.waitFor();
+				}
+				public void done(){
+					try {
+						if(get()!=0){
+							//couldn't find festival
+							Alert alert = new Alert(AlertType.ERROR);
+							alert.setContentText("Could not find Festival, the free Text-To-Speech synthesiser. Sorry about that.");
+							alert.showAndWait();
+						}
+					} catch (InterruptedException | ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			};
 			new Thread(festivalTask).start();
 			
 		} catch (IOException e) {
-			//couldn't find festival
+			//couldn't find BASH
 			Alert alert = new Alert(AlertType.ERROR);
-			alert.setContentText("You don't have Festival, the Text to Speech synthesiser required for this to work");
+			alert.setContentText("This program does not work on non-Linux systems at this time. Sorry about that.");
 			alert.showAndWait();
 		}
 	}
 	/**
 	 * Called by scene controller to update the main application
-	 * Current messages supported:
-	 * "exitController" - called when controller exits
 	 * @param sc
 	 */
 	public void update(SceneController sc, String message){
@@ -204,28 +217,28 @@ public class Main extends Application implements MainInterface {
 			QuizController qc = (QuizController)sc;
 			switch(message){
 			case "quitToMainMenu_onClick":
-				if(game!=null&&game.isGameEnded()){
+				if(game!=null&&!game.isGameEnded()){
 					if(!game.onExit()){return;}
-					String testWord = game.wordList().get(0); 
+					String testWord = game.wordList().get(0);
 					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1);
 				}
-				game.saveStats();
+				this.requestSceneChange("mainMenu");
+				game = null;
 				break;
-			case "confirm_onClick":
+			case "btnConfirm_onClick":
 				if(game!=null&&!game.isGameEnded()){
 					qc.validateAndSubmitInput();
 				}else{
-					game.saveStats();
 					game.startGame();
 				}
 				break;
 			case "newGame":
 				//make new game, start it
-				game = new Game(this);
+				game = new Game(this, statsModel);
 				game.startGame(false);
 				break;
 			case "reviewGame":
-				game = new Game(this);
+				game = new Game(this, statsModel);
 				game.startGame(true);
 				break;
 			case "submitWord":
@@ -233,11 +246,10 @@ public class Main extends Application implements MainInterface {
 				break;
 			case "cleanup":
 				//save and quit
-				if(!game.isGameEnded()){
+				if(game!=null&&!game.isGameEnded()){
 					String testWord = game.wordList().get(0);
 					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1);
 				}
-				game.saveStats();
 				game = null;
 				break;
 			}

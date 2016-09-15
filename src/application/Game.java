@@ -22,13 +22,14 @@ public class Game {
 	private boolean faulted;
 	private boolean prevFaulted;
 	private int wordListSize;
-	private StoredStats stats;
+	private StatisticsModel stats;
 	private boolean review;
 	private boolean gameEnded;
 	private MainInterface main;
 	
-	public Game(MainInterface app){
+	public Game(MainInterface app, StatisticsModel statsModel){
 		main = app;
+		stats = statsModel;
 		wordList = new LinkedList<String>();
 	}
 	
@@ -36,28 +37,11 @@ public class Game {
 		return wordList;
 	}
 	/**
-	 * Saves statistics
-	 */
-	public void saveStats(){
-		main.writeObjectToFile(MainInterface.STATS_PATH, stats);
-	}
-	/**
 	 * Checks if game has ended
 	 * @return true/false
 	 */
 	public boolean isGameEnded(){
 		return gameEnded;
-	}
-	/**
-	 * Helper method that gets stats from the file system path
-	 * @return StoredStats
-	 */
-	private StoredStats getStatsFromFile(){
-		//find stored stats
-		Object obj = main.loadObjectFromFile(MainInterface.STATS_PATH);
-		StoredStats stats = null;
-		if(obj instanceof StoredStats) stats = (StoredStats) obj;
-		return stats;
 	}
 	/**
 	 * Gets word list from file system path
@@ -99,14 +83,10 @@ public class Game {
 	 */
 	public void startGame(boolean practice){
 		gameEnded=false;
-		stats = getStatsFromFile();
-		if(stats==null){
-			stats = new StoredStats();
-		}
 		main.tell("gameStartConfigure");
 		review=false; //assume not reviewing words
 		if(practice){
-			wordList.addAll(stats.getKeys(Type.FAILED));
+			wordList.addAll(stats.getGlobalStats().getKeys(Type.FAILED));
 			if(wordList.size()==0){
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("");
@@ -114,6 +94,7 @@ public class Game {
 				alert.setContentText("You haven't any words to review!\nDo a spelling quiz first.");
 				Optional<ButtonType> response = alert.showAndWait();
 				if(response.get()==ButtonType.OK){
+					gameEnded=true;
 					main.update(new QuizController(), "quitToMainMenu_onClick");
 					main.requestSceneChange("mainMenu");
 				}
@@ -133,6 +114,10 @@ public class Game {
 		wordListSize=(wordList.size()!=0)?wordList.size():1;
 		faulted=false;
 	}
+	/**
+	 * Called when game is going to exit.
+	 * @return true (default) or false to indicate cancellation of exiting
+	 */
 	public boolean onExit(){
 		if(gameEnded){
 			return true;
@@ -161,9 +146,9 @@ public class Game {
 				//mastered
 				main.tell("masteredWord="+testWord);
 				faulted=false;
-				stats.addStat(Type.MASTERED,testWord, 1);
+				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1);
 				// if review, remove from failedlist
-				stats.setStats(Type.FAILED, testWord, 0);
+				stats.getSessionStats().setStats(Type.FAILED, testWord, 0);
 				wordList.remove(0);
 			}else if(faulted&&!prevFaulted){
 				//faulted once => set faulted
@@ -172,7 +157,7 @@ public class Game {
 			}else if(!faulted&&prevFaulted){
 				//correct after faulted => store faulted
 				main.tell("masteredWord="+testWord);
-				stats.addStat(Type.FAULTED,testWord, 1);
+				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1);
 				wordList.remove(0);
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
@@ -182,7 +167,7 @@ public class Game {
 				//faulted twice => failed
 				main.tell("failedWord="+testWord);
 				faulted=false;
-				stats.addStat(Type.FAILED, testWord, 1);
+				stats.getSessionStats().addStat(Type.FAILED, testWord, 1);
 				wordList.remove(0);
 			}
 			if(wordList.size()!=0){

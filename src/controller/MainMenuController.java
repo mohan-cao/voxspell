@@ -22,7 +22,6 @@ public class MainMenuController extends SceneController{
 	 * @param e MouseEvent
 	 */
 	@FXML public void viewStats(MouseEvent e){
-		System.out.println(application);
 		application.requestSceneChange("statsMenu");
 	}
 	/**

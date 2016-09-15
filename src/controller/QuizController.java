@@ -56,7 +56,6 @@ public class QuizController extends SceneController{
 		}
 		saveStats();*/
 		application.update(this, "quitToMainMenu_onClick");
-		application.requestSceneChange("mainMenu");
 	}
 	/**
 	 * Listener for text area key entered
