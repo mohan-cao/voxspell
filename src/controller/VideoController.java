@@ -3,12 +3,8 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Accordion;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 import application.MainInterface;
-import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.media.MediaView;
 import javafx.scene.media.Media;

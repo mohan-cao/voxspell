@@ -1,11 +1,8 @@
 package controller;
 
-import java.lang.reflect.Method;
 
 import application.MainInterface;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 
 public abstract class SceneController {
 	@FXML protected MainInterface application;

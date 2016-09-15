@@ -1,7 +1,6 @@
 package controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
@@ -15,7 +14,7 @@ public class MainMenuController extends SceneController{
 	 * @param e MouseEvent
 	 */
 	@FXML public void newQuiz(MouseEvent e){
-		application.requestSceneChange("quizMenu");
+		application.requestSceneChange("videoReward");
 	}
 	/**
 	 * Listener for Stats view navigation button

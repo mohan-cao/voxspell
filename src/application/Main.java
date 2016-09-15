@@ -12,9 +12,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Optional;
 
 import controller.QuizController;
 import controller.SceneController;
@@ -25,7 +23,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -244,7 +241,6 @@ public class Main extends Application implements MainInterface {
 		}
 	}
 	
-
 	public static void main(String[] args) {
 		launch(args);
 	}
