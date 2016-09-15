@@ -79,18 +79,13 @@ public class VideoController extends SceneController {
 	}
 
 	public void cleanup() {
-		// Optional override
+		if (mediaPlayer != null){ //FIXME: do I need this implementation?
+			killMediaPlayer();
+		}
 	}
 
 	public void onExit() {
 		// Once again optional
-	}
-
-	/**
-	 * Notify view of changes in the model.
-	 */
-	public void onModelChange(Class<? extends Node> updatedPart, String fieldName) {
-
 	}
 
 	@Override
