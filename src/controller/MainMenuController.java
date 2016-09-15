@@ -35,7 +35,7 @@ public class MainMenuController extends SceneController{
 		// Nothing to initialise
 	}
 	@Override
-	public void onModelChange(String fieldName) {
+	public void onModelChange(String fieldName, Object...objects ) {
 		// TODO Auto-generated method stub
 		
 	}

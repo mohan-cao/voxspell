@@ -138,7 +138,7 @@ public class QuizController extends SceneController{
 		application.update(this, "cleanup");
 	}
 	@Override
-	public void onModelChange(String signal) {
+	public void onModelChange(String signal, Object... objectParameters) {
 		switch(signal){
 		case "gameStartConfigure":
 			wordTextArea.setDisable(false);
@@ -151,25 +151,28 @@ public class QuizController extends SceneController{
 			wordTextArea.setDisable(true);
 			confirm.setText("Restart?");
 			break;
-		}
-		if(signal.contains("masteredWord=")){
+		case "masteredWord":
 			outputLabel.setText("Well done");
-			correctWordLabel.setText("Correct, the word is "+signal.split("masteredWord=")[1]);
+			correctWordLabel.setText("Correct, the word is "+objectParameters[0]);
 			progress.setStyle("-fx-accent: lightgreen;");
-		}else if(signal.contains("faultedWord=")){
+			break;
+		case "faultedWord":
 			outputLabel.setText("Try again!");
 			correctWordLabel.setText("Sorry, that wasn't quite right");
 			progress.setStyle("-fx-accent: #ffbf44;");
-		}else if(signal.contains("failedWord=")){
-			outputLabel.setText("Incorrect");
-			correctWordLabel.setText("The word was "+signal.split("failedWord=")[1]);
-			progress.setStyle("-fx-accent: orangered;");
-		}else if(signal.contains("lastChanceWord=")){
+			break;
+		case "lastChanceWord":
 			outputLabel.setText("Last try!");
 			correctWordLabel.setText("Let's slow it down...");
 			progress.setStyle("-fx-accent: #ffbf44;");
-		}else if(signal.contains("setProgress=")){
-			progress.setProgress(Double.parseDouble(signal.split("setProgress=")[1]));
+			break;
+		case "failedWord":
+			outputLabel.setText("Incorrect");
+			correctWordLabel.setText("The word was "+objectParameters[0]);
+			progress.setStyle("-fx-accent: orangered;");
+			break;
+		case "setProgress":
+			progress.setProgress(Double.class.cast(objectParameters[0]));
 		}
 	}
 	@Override

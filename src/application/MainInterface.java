@@ -39,8 +39,9 @@ public interface MainInterface {
 	/**
 	 * Notifies current controller of update with message.
 	 * @param msg
+	 * @param objects object parameters
 	 */
-	public void tell(String msg);
+	public void tell(String msg, Object... objects);
 	/**
 	 * Says word in festival
 	 * @param is Sequence of speeds

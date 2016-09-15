@@ -109,7 +109,7 @@ public class Game {
 				main.sayWord(new int[]{1},wordList.get(0));
 		}
 		//set faulted=false for first word
-		main.tell("setProgress=0");
+		main.tell("setProgress",0d);
 		wordListSize=(wordList.size()!=0)?wordList.size():1;
 		faulted=false;
 	}
@@ -143,7 +143,7 @@ public class Game {
 			faulted=!word.toLowerCase().equals(testWord.toLowerCase());
 			if(!faulted&&!prevFaulted){
 				//mastered
-				main.tell("masteredWord="+testWord);
+				main.tell("masteredWord",testWord);
 				faulted=false;
 				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1);
 				// if review, remove from failedlist
@@ -151,20 +151,20 @@ public class Game {
 				wordList.remove(0);
 			}else if(faulted&&!prevFaulted){
 				//faulted once => set faulted
-				main.tell("faultedWord="+testWord);
+				main.tell("faultedWord",testWord);
 				speed = 2;
 			}else if(!faulted&&prevFaulted){
 				//correct after faulted => store faulted
-				main.tell("masteredWord="+testWord);
+				main.tell("masteredWord",testWord);
 				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1);
 				wordList.remove(0);
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
-				main.tell("lastChanceWord="+testWord);
+				main.tell("lastChanceWord",testWord);
 				speed = 3;
 			}else{
 				//faulted twice => failed
-				main.tell("failedWord="+testWord);
+				main.tell("failedWord",testWord);
 				faulted=false;
 				stats.getSessionStats().addStat(Type.FAILED, testWord, 1);
 				wordList.remove(0);
@@ -176,7 +176,7 @@ public class Game {
 				gameEnded=true;
 			}
 			//set progressbars for progress through quiz and also denote additional separation for faulted words
-			main.tell("setProgress="+(wordListSize-wordList.size()+((faulted)?0.5:0))/(double)wordListSize);
+			main.tell("setProgress",(wordListSize-wordList.size()+((faulted)?0.5:0))/(double)wordListSize);
 		}
 	}
 }

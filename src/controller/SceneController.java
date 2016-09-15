@@ -40,5 +40,5 @@ public abstract class SceneController {
 	/**
 	 * Notify view of changes in the model.
 	 */
-	public abstract void onModelChange(String fieldName);
+	public abstract void onModelChange(String fieldName, Object... objectsParameters);
 }

@@ -28,6 +28,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import resources.StoredStats;
 import resources.StoredStats.Type;
 
 public class Main extends Application implements MainInterface {
@@ -151,9 +152,9 @@ public class Main extends Application implements MainInterface {
 		}
 		return false;
 	}
-	public void tell(String message) {
+	public void tell(String message, Object... objectParams) {
 		//propagate + notify currentController (view-controller) of changes
-		currentController.onModelChange(message);
+		currentController.onModelChange(message, objectParams);
 	}
 	/**
 	 * Creates a new process of Festival that says a word
@@ -182,11 +183,12 @@ public class Main extends Application implements MainInterface {
 					return process.waitFor();
 				}
 				public void succeeded(){
+					super.succeeded();
 					try {
 						if(get()!=0){
 							//couldn't find festival
 							Alert alert = new Alert(AlertType.ERROR);
-							alert.setContentText("Could not find Festival, the free Text-To-Speech synthesiser. Sorry about that.");
+							alert.setContentText("Could not find Festival Text-To-Speech\nsynthesiser. Sorry about that.");
 							alert.showAndWait();
 						}
 					} catch (InterruptedException | ExecutionException e) {
@@ -251,7 +253,20 @@ public class Main extends Application implements MainInterface {
 				break;
 			}
 		}else if(sc instanceof StatsController){
-			
+			StatsController stc = (StatsController)sc;
+			switch(message){
+			case "clearStats":
+				statsModel.getGlobalStats().clearStats();
+				statsModel.getSessionStats().clearStats();
+				statsModel.sessionEnd();
+	    		break;
+			case "requestGlobalStats":
+				sc.onModelChange("globalStatsLoaded", statsModel.getGlobalStats());
+				break;
+			case "requestSessionStats":
+				sc.onModelChange("sessionStatsLoaded", statsModel.getSessionStats());
+				break;
+			}
 		}
 	}
 	
