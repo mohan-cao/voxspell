@@ -6,14 +6,13 @@ import javafx.scene.Node;
 
 import application.MainInterface;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.media.MediaView;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 
 public class VideoController extends SceneController {
-
-	@FXML
-	protected MainInterface application;
 
 	@FXML
 	private MediaView videoView;
@@ -27,28 +26,21 @@ public class VideoController extends SceneController {
 	private MediaPlayer mediaPlayer;
 	
 	@FXML
-	void stopVideo(ActionEvent event) {
+	private void stopVideo(MouseEvent event) {
+		if(mediaPlayer==null)return;
 		mediaPlayer.stop();
 	}
 
 	@FXML
-	void quitToMainMenu(ActionEvent event) {
+	private void quitToMainMenu(MouseEvent event) {
 		if (mediaPlayer != null){
 			killMediaPlayer();
 		}
 		application.requestSceneChange("mainMenu");
 	}
-
-	/**
-	 * All controllers reference back to application for model/view changes
-	 * 
-	 * @param app
-	 */
-	public void setApplication(MainInterface app) {
-		application = app;
-	}
 	
 	private void killMediaPlayer(){
+		if(mediaPlayer==null)return;
 		mediaPlayer.stop();
 		mediaPlayer = null;
 	}
@@ -58,15 +50,7 @@ public class VideoController extends SceneController {
 	 */
 	@FXML
 	public void initialize() {
-		if (mediaPlayer != null){
-			killMediaPlayer();
-		}
-		String source = "resources/Gandalf Europop Nod.mp4"; //FIXME
-		Media media = new Media(source);
-		MediaPlayer mediaPlayer = new MediaPlayer(media);
-		mediaPlayer.setAutoPlay(true);
-		videoView.setMediaPlayer(mediaPlayer);
-		
+		// as of right now in the initialize() method, there is no access to the application field (it is null)
 	}
 
 	/**
@@ -75,7 +59,23 @@ public class VideoController extends SceneController {
 	 * @param args
 	 */
 	public void init(String[] args) {
-
+		// TODO
+		// here's some hints as to how to approach the MVC pattern:
+		// - controller updates model on changes that occurred (namely, in this case, an initialization occurred)
+		// - model updates view with new data, namely the Media source which is loaded.
+		
+		// The video controller acts as both a controller and a view as it has both "update" components
+		// and "listener" components
+		
+		/*if (mediaPlayer != null){
+			killMediaPlayer();
+		}
+		String source = "../resources/Gandalf%20Europop%20Nod.mp4"; //FIXME
+		Media media = new Media(source);
+		MediaPlayer mediaPlayer = new MediaPlayer(media);
+		mediaPlayer.setAutoPlay(true);
+		videoView.setMediaPlayer(mediaPlayer);*/
+		application.update(this, "requestVideo");
 	}
 
 	public void cleanup() {
@@ -89,8 +89,23 @@ public class VideoController extends SceneController {
 	}
 
 	@Override
-	public void onModelChange(String fieldName) {
-		// TODO Auto-generated method stub
+	public void onModelChange(String notificationString, Object... objectsParameters) {
+		// Model has changed (video is now ready), so components need to be loaded
+		switch(notificationString){
+		case "videoReady":
+			if(objectsParameters[0]==null){System.err.println("can't find resource");return;}
+			Media media = (Media) objectsParameters[0];
+			System.out.println(media.getSource());
+			try{
+				mediaPlayer = new MediaPlayer(media);
+			}catch(MediaException me){
+				me.printStackTrace();
+			}
+			
+			videoView.setMediaPlayer(mediaPlayer);
+			mediaPlayer.play();
+			break;
+		}
 		
 	}
 }

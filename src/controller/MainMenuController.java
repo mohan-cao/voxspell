@@ -21,7 +21,6 @@ public class MainMenuController extends SceneController{
 	 * @param e MouseEvent
 	 */
 	@FXML public void viewStats(MouseEvent e){
-		System.out.println(application);
 		application.requestSceneChange("statsMenu");
 	}
 	/**
@@ -35,7 +34,17 @@ public class MainMenuController extends SceneController{
 		// Nothing to initialise
 	}
 	@Override
-	public void onModelChange(String fieldName) {
+	public void onModelChange(String fieldName, Object...objects ) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void cleanup() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onExit() {
 		// TODO Auto-generated method stub
 		
 	}
