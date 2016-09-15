@@ -188,7 +188,7 @@ public class Main extends Application implements MainInterface {
 						if(get()!=0){
 							//couldn't find festival
 							Alert alert = new Alert(AlertType.ERROR);
-							alert.setContentText("Could not find Festival Text-To-Speech\nsynthesiser. Sorry about that.");
+							alert.setContentText("Could not find Festival text-to-speech\nsynthesiser. Sorry about that.");
 							alert.showAndWait();
 						}
 					} catch (InterruptedException | ExecutionException e) {
