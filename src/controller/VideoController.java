@@ -79,7 +79,9 @@ public class VideoController extends SceneController {
 	}
 
 	public void cleanup() {
-		// Optional override
+		if (mediaPlayer != null){ //FIXME: do I need this implementation?
+			killMediaPlayer();
+		}
 	}
 
 	public void onExit() {
@@ -93,7 +95,6 @@ public class VideoController extends SceneController {
 		case "videoReady":
 			if(objectsParameters[0]==null){System.err.println("can't find resource");return;}
 			Media media = (Media) objectsParameters[0];
-			System.out.println(media.getSource());
 			try{
 				mediaPlayer = new MediaPlayer(media);
 			}catch(MediaException me){
