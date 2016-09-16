@@ -272,7 +272,7 @@ public class Main extends Application implements MainInterface {
 		}else if(sc instanceof VideoController){
 			switch(message){
 			case "requestVideo":
-				URL url = getClass().getClassLoader().getResource("resources/Gandalf Europop Nod.mp4");
+				URL url = getClass().getClassLoader().getResource("resources/big_buck_bunny_1_minute.mp4");
 				Media media = new Media(url.toString());
 				sc.onModelChange("videoReady", media);
 				break;
