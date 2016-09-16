@@ -1,11 +1,8 @@
 package controller;
 
-import java.lang.reflect.Method;
 
 import application.MainInterface;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 
 public abstract class SceneController {
 	@FXML protected MainInterface application;
@@ -40,5 +37,5 @@ public abstract class SceneController {
 	/**
 	 * Notify view of changes in the model.
 	 */
-	public abstract void onModelChange(String fieldName, Object... objectsParameters);
+	public abstract void onModelChange(String notificationString, Object... objectsParameters);
 }

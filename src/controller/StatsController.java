@@ -133,9 +133,9 @@ public class StatsController extends SceneController{
 	}
 	
 	@Override
-	public void onModelChange(String fieldName, Object... objectParameters) {
+	public void onModelChange(String notificationString, Object... objectParameters) {
 		// TODO Auto-generated method stub
-		switch(fieldName){
+		switch(notificationString){
 		case "globalStatsLoaded":
 			statsChange((StoredStats)objectParameters[0]);
 			break;
