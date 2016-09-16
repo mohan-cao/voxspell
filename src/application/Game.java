@@ -24,12 +24,17 @@ public class Game {
 	private StatisticsModel stats;
 	private boolean review;
 	private boolean gameEnded;
+	private int _level;
 	private MainInterface main;
 	
 	public Game(MainInterface app, StatisticsModel statsModel){
+		this(app,statsModel,1);
+	}
+	public Game(MainInterface app, StatisticsModel statsModel, int level){
 		main = app;
 		stats = statsModel;
 		wordList = new LinkedList<String>();
+		_level = level;
 	}
 	
 	public List<String> wordList(){

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import controller.LevelController;
 import controller.QuizController;
 import controller.SceneController;
 import controller.StatsController;
@@ -265,6 +266,16 @@ public class Main extends Application implements MainInterface {
 				break;
 			case "requestSessionStats":
 				sc.onModelChange("sessionStatsLoaded", statsModel.getSessionStats());
+				break;
+			}
+		}else if(sc instanceof LevelController){
+			LevelController lc = (LevelController) sc;
+			switch(message){
+			case "requestNewGameLevels":
+				
+				sc.onModelChange("levelsLoaded", );
+				break;
+			case "requestReviewGameLevels":
 				break;
 			}
 		}
