@@ -336,27 +336,31 @@ public class Main extends Application implements MainInterface {
 			}
 		}else if(sc instanceof LevelController){
 			LevelController lc = (LevelController) sc;
-			
 			switch(message){
 			case "requestLevels":
 				ArrayList<Double> levelStats = new ArrayList<Double>();
-				int globalMastered = 0;
-				int globalFailed = 0;
-				int sessionMastered = 0;
-				int sessionFailed = 0;
 				Set<Integer> unlockedLevelSet = new LinkedHashSet<Integer>();
 				unlockedLevelSet.addAll(statsModel.getGlobalStats().getUnlockedLevelSet());
 				unlockedLevelSet.addAll(statsModel.getSessionStats().getUnlockedLevelSet());
 				ArrayList<Integer> unlockedLevels = new ArrayList<Integer>(unlockedLevelSet);
 				Collections.sort(unlockedLevels);
-				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
+				StoredStats sStats = statsModel.getGlobalStats();
+				StoredStats gStats = statsModel.getSessionStats();
+				int globalMastered = 0;
+				int globalFailed = 0;
+				int globalFaulted = 0;
+				int sessionMastered = 0;
+				int sessionFailed = 0;
+				int sessionFaulted = 0;
 				for(Integer i : unlockedLevels){
-					globalMastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i, StoredStats.Type.MASTERED); //just get stats of level 1 now
-					globalFailed = statsModel.getGlobalStats().getTotalStatsOfLevel(i, StoredStats.Type.FAILED);
-					sessionMastered = statsModel.getSessionStats().getTotalStatsOfLevel(i, StoredStats.Type.MASTERED); //just get stats of level 1 now
-					sessionFailed = statsModel.getSessionStats().getTotalStatsOfLevel(i, StoredStats.Type.FAILED);
+					globalMastered = gStats.getTotalStatsOfLevel(i, StoredStats.Type.MASTERED);
+					globalFailed = gStats.getTotalStatsOfLevel(i, StoredStats.Type.FAILED);
+					globalFaulted = gStats.getTotalStatsOfLevel(i, StoredStats.Type.FAULTED);
+					sessionMastered = sStats.getTotalStatsOfLevel(i, StoredStats.Type.MASTERED);
+					sessionFailed = sStats.getTotalStatsOfLevel(i, StoredStats.Type.FAILED);
+					sessionFaulted = sStats.getTotalStatsOfLevel(i, StoredStats.Type.FAULTED);
 					if((globalMastered+globalFailed+sessionMastered+sessionFailed)!=0){
-						levelStats.add(i,(globalMastered+sessionMastered)/(double)(sessionFailed+sessionMastered+globalFailed+globalMastered));
+						levelStats.add(i,(globalMastered+sessionMastered)/(double)(sessionFailed+sessionMastered+sessionFaulted+globalFailed+globalMastered+globalFaulted));
 					}else{
 						levelStats.add(i, 0d);
 					}
