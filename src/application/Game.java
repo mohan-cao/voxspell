@@ -41,7 +41,6 @@ public class Game {
 	private int _incorrect;
 	
 	private String voiceType;
-	private String testWord;
 	
 	public Game(MainInterface app, StatisticsModel statsModel){
 		this(app,statsModel,1);
@@ -166,7 +165,6 @@ public class Game {
 		}
 		if(!wordList.isEmpty()){
 				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
-				testWord = wordList.get(0);
 				main.sayWord(new int[]{1}, voiceType,wordList.get(0));
 		}
 		//set faulted=false for first word
@@ -180,7 +178,7 @@ public class Game {
 	 * @author Ryan Macmillan
 	 */
 	public void repeatWord(){
-		main.sayWord(new int[]{1}, voiceType, testWord);
+		main.sayWord(new int[]{1}, voiceType, wordList.get(0));
 	}
 	
 	/**
@@ -246,7 +244,6 @@ public class Game {
 				_incorrect++;
 			}
 			if(wordList.size()!=0){
-				testWord = wordList.get(0);
 				main.sayWord(new int[]{speed},voiceType, wordList.get(0));
 			}else{
 				main.tell("resetGame",_correct,(_correct+_incorrect));
@@ -257,12 +254,5 @@ public class Game {
 		}
 	}
 	
-	/**
-	 * Gets test word
-	 * @return
-	 * @author Ryan Macmillan
-	 */
-	public String getTestWord(){
-		return testWord;
-	}
+	
 }
