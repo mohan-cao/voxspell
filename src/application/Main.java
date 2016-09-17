@@ -305,6 +305,9 @@ public class Main extends Application implements MainInterface {
 				break;
 			}
 		}
+		//else if (sc instanceof VideoController){
+		//messages -> pause, quit to main menu
+	//}
 	}
 	
 

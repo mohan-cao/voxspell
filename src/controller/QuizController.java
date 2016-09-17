@@ -17,10 +17,31 @@ public class QuizController extends SceneController{
 	@FXML private TextArea wordTextArea;
 	@FXML private Button confirm;
 	@FXML private ProgressBar progress;
+	@FXML private Button repeat;
+	@FXML private Button toggle; 
 	
 	@FXML
 	public void initialize(){
 	}
+	
+	/**
+	 * Listener for change voice button
+	 * @param me MouseEvent: mouse clicked button
+	 */
+	@FXML
+	public void changeVoice(MouseEvent me){
+		application.update(this, "changeVoice_onClick");
+	}
+	
+	/**
+	 * Listener for repeat word button
+	 * @param me MouseEvent: mouse clicked button
+	 */
+	@FXML
+	public void repeatWord(MouseEvent me){
+		application.update(this, "repeatWord_onClick");
+	}
+	
 	/**
 	 * Listener for quit to main menu navigation button
 	 * @param me MouseEvent
