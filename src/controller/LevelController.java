@@ -39,11 +39,10 @@ public class LevelController extends SceneController {
 		application.update(this, "levelViewLoaded");
 		if(args!=null && args.length>0 && args[0].equals("failed")){
 			review = true;
-			application.update(this, "requestReviewGameLevels");
 		}else{
 			review = false;
-			application.update(this, "requestNewGameLevels");
 		}
+		application.update(this, "requestLevels");
 	}
 	public void onModelChange(String fieldName, Object...objects) {
 		switch(fieldName){

@@ -218,8 +218,7 @@ public class Game {
 				main.tell("masteredWord",testWord);
 				faulted=false;
 				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1, _level);
-				//if not review, then add one correct
-				if(!review) _correct++;
+				_correct++;
 				// if review, remove from failedlist
 				stats.getGlobalStats().setStats(Type.FAILED, testWord, 0);
 				stats.getSessionStats().setStats(Type.FAILED, testWord, 0);
@@ -232,8 +231,7 @@ public class Game {
 				//correct after faulted => store faulted
 				main.tell("masteredWord",testWord);
 				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1, _level);
-				// if not review, then add one correct
-				if(!review) _correct++;
+				_correct++;
 				wordList.remove(0);
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
@@ -245,8 +243,7 @@ public class Game {
 				faulted=false;
 				stats.getSessionStats().addStat(Type.FAILED, testWord, 1, _level);
 				wordList.remove(0);
-				// if not review, then add one incorrect
-				if(!review) _incorrect++;
+				_incorrect++;
 			}
 			if(wordList.size()!=0){
 				testWord = wordList.get(0);

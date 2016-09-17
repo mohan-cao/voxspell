@@ -284,25 +284,23 @@ public class Main extends Application implements MainInterface {
 			}
 		}else if(sc instanceof LevelController){
 			LevelController lc = (LevelController) sc;
-			int mastered = 0;
-			int failed = 0;
+			
 			double[] levelStats = new double[10];
 			switch(message){
-			case "requestNewGameLevels":
+			case "requestLevels":
+				int globalMastered = 0;
+				int globalFailed = 0;
+				int sessionMastered = 0;
+				int sessionFailed = 0;
 				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
 				for(int i=0;i<10;i++){
-				mastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
-				failed = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
-				levelStats[i] = ((failed+mastered)!=0)?(mastered/(double)(failed+mastered)):0;
-				}
-				sc.onModelChange("levelsLoaded", levelStats);
-				break;
-			case "requestReviewGameLevels":
-				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
-				for(int i=0;i<10;i++){
-				mastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
-				failed = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
-				levelStats[i] = ((failed+mastered)!=0)?(mastered/(double)(failed+mastered)):0;
+					globalMastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
+					globalFailed = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
+					sessionMastered = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
+					sessionFailed = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
+					if((globalMastered+globalFailed+sessionMastered+sessionFailed)!=0){
+						levelStats[i] = (globalMastered+sessionMastered)/(double)(sessionFailed+sessionMastered+globalFailed+globalMastered);
+					}
 				}
 				sc.onModelChange("levelsLoaded", levelStats);
 				break;
