@@ -158,12 +158,18 @@ public class Main extends Application implements MainInterface {
 		//propagate + notify currentController (view-controller) of changes
 		currentController.onModelChange(message, objectParams);
 	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * Creates a new process of Festival that says a word
 	 * @param speed
 	 * @param words
 	 */
-	public void sayWord(int[] speed, String... words){
+	public void sayWord(int[] speed, String voiceType, String... words){
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c", "festival");
 		try {
 			if(festivalTask!=null){
@@ -175,6 +181,7 @@ public class Main extends Application implements MainInterface {
 				if(i<speed.length){
 					pw.println("(Parameter.set 'Duration_Stretch "+speed[i]+")");
 				}
+				pw.println("(voice_" + voiceType +")");
 				pw.println("(SayText \""+words[i]+"\")");
 			}
 			pw.println("(quit)");
@@ -252,6 +259,12 @@ public class Main extends Application implements MainInterface {
 					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1);
 				}
 				game = null;
+				break;
+			case "changeVoice_onClick":
+				game.changeVoice();
+				break;
+			case "repeatWord_onClick":
+				game.repeatWord();
 				break;
 			}
 		}else if(sc instanceof StatsController){

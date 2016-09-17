@@ -47,5 +47,5 @@ public interface MainInterface {
 	 * @param is Sequence of speeds
 	 * @param string Sequence of strings
 	 */
-	public void sayWord(int[] is, String... string);
+	public void sayWord(int[] is, String voice, String... string);
 }

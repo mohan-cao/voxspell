@@ -25,11 +25,14 @@ public class Game {
 	private boolean review;
 	private boolean gameEnded;
 	private MainInterface main;
+	private String voiceType;
+	private String testWord;
 	
 	public Game(MainInterface app, StatisticsModel statsModel){
 		main = app;
 		stats = statsModel;
 		wordList = new LinkedList<String>();
+		voiceType = "kal_diphone"; //FIXME: CHECK WHICH VOICES ARE AVAILABLE ON ECE MACHINE
 	}
 	
 	public List<String> wordList(){
@@ -42,6 +45,19 @@ public class Game {
 	public boolean isGameEnded(){
 		return gameEnded;
 	}
+	
+	/**
+	 * Toggles from kal_diphone voice to akl_nz_jdt_diphone or vice versa
+	 */
+	public void changeVoice(){
+		if(voiceType.equals("kal_diphone")){
+			voiceType = "akl_nz_jdt_diphone";
+		}
+		else {
+			voiceType = "kal_diphone";
+		}
+	}
+	
 	/**
 	 * Gets word list from file system path
 	 * @return whether the word list has been successfully fetched to the wordList variable
@@ -106,13 +122,22 @@ public class Game {
 		}
 		if(!wordList.isEmpty()){
 				wordList = wordList.subList(0, (wordList.size()>=3)?3:wordList.size());
-				main.sayWord(new int[]{1},wordList.get(0));
+				testWord = wordList.get(0);
+				main.sayWord(new int[]{1}, voiceType,wordList.get(0));
 		}
 		//set faulted=false for first word
 		main.tell("setProgress",0d);
 		wordListSize=(wordList.size()!=0)?wordList.size():1;
 		faulted=false;
 	}
+	
+	/**
+	 * Repeat the word using festival
+	 */
+	public void repeatWord(){
+		main.sayWord(new int[]{1}, voiceType, testWord);
+	}
+	
 	/**
 	 * Called when game is going to exit.
 	 * @return true (default) or false to indicate cancellation of exiting
@@ -139,7 +164,6 @@ public class Game {
 			int speed = 1;
 			boolean prev2Faulted = prevFaulted;
 			prevFaulted = faulted;
-			String testWord = wordList.get(0);
 			faulted=!word.toLowerCase().equals(testWord.toLowerCase());
 			if(!faulted&&!prevFaulted){
 				//mastered
@@ -170,7 +194,8 @@ public class Game {
 				wordList.remove(0);
 			}
 			if(wordList.size()!=0){
-				main.sayWord(new int[]{speed},wordList.get(0));
+				testWord = wordList.get(0);
+				main.sayWord(new int[]{speed},voiceType, wordList.get(0));
 			}else{
 				main.tell("resetGame");
 				gameEnded=true;
@@ -178,5 +203,10 @@ public class Game {
 			//set progressbars for progress through quiz and also denote additional separation for faulted words
 			main.tell("setProgress",(wordListSize-wordList.size()+((faulted)?0.5:0))/(double)wordListSize);
 		}
+	}
+	
+	
+	public String getTestWord(){
+		return testWord;
 	}
 }
