@@ -59,8 +59,8 @@ public class LevelController extends SceneController {
 						application.update(this,"startNewGame");
 					}
 				});
-				contentPane.getChildren().add(new Label("Spelling accuracy"));
-				contentPane.getChildren().add(new Label("(words mastered/total): "+Math.round(stats[i]*100)+"%"));
+				contentPane.getChildren().add(new Label("Mastery (words mastered/total):"));
+				contentPane.getChildren().add(new Label(Math.round(stats[i]*100)+"%"));
 				contentPane.getChildren().add(newGameBtn);
 				newPane.setText("Level " + (i+1));
 				newPane.setContent(contentPane);

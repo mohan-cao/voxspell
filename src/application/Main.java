@@ -172,7 +172,7 @@ public class Main extends Application implements MainInterface {
 	 * @param speed
 	 * @param words
 	 */
-	public void sayWord(int[] speed, String voiceType, String... words){
+	public void sayWord(final int[] speed, final String voiceType, final String... words){
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c", "festival");
 		try {
 			if(festivalTask!=null){

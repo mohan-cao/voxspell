@@ -1,5 +1,7 @@
 package controller;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -102,6 +104,10 @@ public class VideoController extends SceneController {
 			}
 			
 			videoView.setMediaPlayer(mediaPlayer);
+			
+			DoubleProperty widthProperty = videoView.fitWidthProperty();
+			widthProperty.bind(Bindings.selectDouble(videoView.parentProperty(), "width"));
+			videoView.setPreserveRatio(true);
 			mediaPlayer.play();
 			break;
 		}

@@ -120,7 +120,8 @@ public class StatsController extends SceneController{
 					sb.append("Word: "+key+"\n");
 					sb.append("Mastered: "+mastered+"\n");
 					sb.append("Failed: "+failed+"\n");
-					sb.append("Faulted: "+faulted+"\n\n");
+					sb.append("Faulted: "+faulted+"\n");
+					sb.append("Mastery: "+Math.round(mastered/(double)(mastered+failed+faulted)*100)+"%\n\n");
 				}
 				if(sb.length()==0){return "No stats to display :(\nGo and do some quizzes";}
 				return sb.toString();

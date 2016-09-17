@@ -20,6 +20,8 @@ import resources.StoredStats.Type;
  * Contains the logic for evaluating words and storing game state, and acts as the Game data model.
  * Created on demand for "review" and "new" games.
  * 
+ * Requires a MainInterface and StatisticsModel to function properly.
+ * 
  * @author Mohan Cao
  * @author Ryan Macmillan
  *
@@ -91,7 +93,8 @@ public class Game {
 	/**
 	 * Gets word list from file system path
 	 * @return whether the word list has been successfully fetched to the wordList variable
-	 * @author Mohan Cao/Ryan MacMillan
+	 * @author Mohan Cao
+	 * @author Ryan MacMillan
 	 */
 	private boolean getWordList(){
 		try {
@@ -178,7 +181,9 @@ public class Game {
 	 * @author Ryan Macmillan
 	 */
 	public void repeatWord(){
+		if(!gameEnded){
 		main.sayWord(new int[]{1}, voiceType, wordList.get(0));
+		}
 	}
 	
 	/**
