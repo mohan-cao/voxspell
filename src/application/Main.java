@@ -235,12 +235,9 @@ public class Main extends Application implements MainInterface {
 				}
 				break;
 			case "newGame":
-				//make new game, start it
-				game = new Game(this, statsModel);
 				game.startGame(false);
 				break;
 			case "reviewGame":
-				game = new Game(this, statsModel);
 				game.startGame(true);
 				break;
 			case "submitWord":
@@ -284,7 +281,6 @@ public class Main extends Application implements MainInterface {
 				levelStats[i] = ((failed+mastered)!=0)?mastered/(failed+mastered):0;
 				}
 				sc.onModelChange("levelsLoaded", levelStats);
-				
 				break;
 			case "requestReviewGameLevels":
 				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
@@ -294,7 +290,14 @@ public class Main extends Application implements MainInterface {
 				levelStats[i] = ((failed+mastered)!=0)?mastered/(failed+mastered):0;
 				}
 				sc.onModelChange("levelsLoaded", levelStats);
-				
+				break;
+			case "startNewGame":
+				game = new Game(this, statsModel, lc.getLevelSelected());
+				this.requestSceneChange("quizMenu");
+				break;
+			case "startReviewGame":
+				game = new Game(this, statsModel, lc.getLevelSelected());
+				this.requestSceneChange("quizMenu","failed");
 				break;
 			}
 		}else if(sc instanceof VideoController){

@@ -1,6 +1,8 @@
 package controller;
 
 import javafx.collections.ListChangeListener;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -12,6 +14,19 @@ import javafx.scene.layout.VBox;
 public class LevelController extends SceneController {
 	@FXML private Accordion levelAccordion;
 	@FXML private boolean review;
+	
+	class LevelPane extends TitledPane {
+		private int _level;
+		public LevelPane(int level){
+			super();
+			_level = level;
+		}
+		public int getLevel(){
+			return _level;
+		}
+	}
+	
+	
 	@FXML public void initialize(){
 		//empty for subclasses to override
 		levelAccordion.getPanes().clear();
@@ -37,7 +52,6 @@ public class LevelController extends SceneController {
 	public void quitToMainMenu(MouseEvent me){
 		application.requestSceneChange("mainMenu");
 	}
-	@Override
 	public void init(String[] args) {
 		// TODO Auto-generated method stub
 		application.update(this, "levelViewLoaded");
@@ -49,15 +63,21 @@ public class LevelController extends SceneController {
 			application.update(this, "requestNewGameLevels");
 		}
 	}
-	@Override
 	public void onModelChange(String fieldName, Object...objects) {
 		switch(fieldName){
 		case "levelsLoaded":
 			int[] stats = (int[])objects[0];
 			for(int i=0;i<stats.length;i++){
-				TitledPane newPane = new TitledPane();
+				LevelPane newPane = new LevelPane(i+1);
 				VBox contentPane = new VBox();
 				Button newGameBtn = new Button("Start Game");
+				newGameBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+					if(review){
+						application.update(this,"startReviewGame");
+					}else{
+						application.update(this,"startNewGame");
+					}
+				});
 				contentPane.getChildren().add(new Label("Spelling accuracy"));
 				contentPane.getChildren().add(new Label("(words mastered/total): "+stats[i]));
 				contentPane.getChildren().add(newGameBtn);
@@ -68,12 +88,16 @@ public class LevelController extends SceneController {
 			break;
 		}
 	}
-	@Override
+	public Integer getLevelSelected(){
+		return ((LevelPane)levelAccordion.getExpandedPane()).getLevel();
+	}
+	
+	
+	
 	public void cleanup() {
 		// TODO Auto-generated method stub
 		
 	}
-	@Override
 	public void onExit() {
 		// TODO Auto-generated method stub
 		

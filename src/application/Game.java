@@ -76,16 +76,18 @@ public class Game {
 			BufferedReader br = new BufferedReader(fi);
 			String line = null;
 			while((line= br.readLine())!=null){
-				if(line.startsWith("%Level ")){
+				if(line.contains("%Level "+_level)){
 					line = line.split("%Level ")[1];
 					_level = Integer.parseInt(line);
+					line = br.readLine();
 					while(!line.startsWith("%Level ")){
-						line = br.readLine();
 						wordList.add(line);
+						line = br.readLine();
 					}
 					break;
 				}
 			}
+			System.out.println(wordList);
 			Collections.shuffle(wordList);
 			br.close();
 			return true;

@@ -32,7 +32,7 @@ public class StatsController extends SceneController{
 	@FXML
 	public void initialize(){
 		statsSelection.getItems().addAll("Global statistics", "Session statistics");
-		statsSelection.getSelectionModel().select(0);
+		statsSelection.getSelectionModel().select(1);
 		statsSelection.setEditable(false);
 		StatsController thisController = this;
 		statsSelection.valueProperty().addListener(new ChangeListener<String>(){
@@ -118,6 +118,7 @@ public class StatsController extends SceneController{
 					sb.append("Failed: "+stats.getStat(Type.FAILED, key)+"\n");
 					sb.append("Faulted: "+stats.getStat(Type.FAULTED, key)+"\n\n");
 				}
+				if(sb.length()==0){return "No stats to display :(";}
 				return sb.toString();
 			}
 			public void succeeded(){

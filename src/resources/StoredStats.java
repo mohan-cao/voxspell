@@ -9,7 +9,6 @@ import java.util.List;
 public class StoredStats implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private HashMap<String,Stats> _stats;
-	private int _currentLevel;
 	private HashMap<Integer,Boolean> _unlockedLevels;
 	
 	public enum Type{
@@ -81,7 +80,6 @@ public class StoredStats implements Serializable{
 	 */
 	public StoredStats(){
 		clearStats();
-		_currentLevel=0;
 		_unlockedLevels = new HashMap<Integer,Boolean>();
 		_unlockedLevels.put(0, true);
 		_unlockedLevels.put(1, true);
@@ -93,12 +91,8 @@ public class StoredStats implements Serializable{
 	public void unlockLevel(int level){
 		_unlockedLevels.put(level, true);
 	}
-	/**
-	 * Get current level
-	 * @return
-	 */
-	public int getCurrentLevel(){
-		return _currentLevel;
+	public Integer getLevel(String key){
+		return _stats.get(key).getLevel();
 	}
 	/**
 	 * Checks if level is locked. If level does not exist, it is locked.
@@ -149,10 +143,9 @@ public class StoredStats implements Serializable{
 	 */
 	public void addStats(StoredStats other){
 		for(String key : other.getKeys()){
-			int level = other.getCurrentLevel();
-			this.addStat(Type.MASTERED, key, other.getStat(Type.MASTERED, key), level);
-			this.addStat(Type.FAULTED, key, other.getStat(Type.FAULTED, key), level);
-			this.addStat(Type.FAILED, key, other.getStat(Type.FAILED, key), level);
+			this.addStat(Type.MASTERED, key, other.getStat(Type.MASTERED, key), other.getLevel(key));
+			this.addStat(Type.FAULTED, key, other.getStat(Type.FAULTED, key), other.getLevel(key));
+			this.addStat(Type.FAILED, key, other.getStat(Type.FAILED, key), other.getLevel(key));
 		}
 	}
 	/**
