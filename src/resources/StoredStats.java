@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class StoredStats implements Serializable{
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	private HashMap<String,Stats> _stats;
 	private HashMap<Integer,Boolean> _unlockedLevels;
 	
@@ -17,7 +17,7 @@ public class StoredStats implements Serializable{
 		FAULTED
 	}
 	class Stats implements Serializable{
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 2L;
 		int mastered;
 		int failed;
 		int faulted;
