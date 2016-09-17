@@ -222,7 +222,7 @@ public class Main extends Application implements MainInterface {
 				if(game!=null&&!game.isGameEnded()){
 					if(!game.onExit()){return;}
 					String testWord = game.wordList().get(0);
-					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1);
+					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1, game.level());
 				}
 				this.requestSceneChange("mainMenu");
 				game = null;
@@ -250,7 +250,7 @@ public class Main extends Application implements MainInterface {
 				//save and quit
 				if(game!=null&&!game.isGameEnded()){
 					String testWord = game.wordList().get(0);
-					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1);
+					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1, game.level());
 				}
 				game = null;
 				break;
@@ -272,12 +272,29 @@ public class Main extends Application implements MainInterface {
 			}
 		}else if(sc instanceof LevelController){
 			LevelController lc = (LevelController) sc;
+			int mastered = 0;
+			int failed = 0;
+			int[] levelStats = new int[10];
 			switch(message){
 			case "requestNewGameLevels":
+				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
+				for(int i=0;i<10;i++){
+				mastered = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
+				failed = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
+				levelStats[i] = ((failed+mastered)!=0)?mastered/(failed+mastered):0;
+				}
+				sc.onModelChange("levelsLoaded", levelStats);
 				
-				sc.onModelChange("levelsLoaded", );
 				break;
 			case "requestReviewGameLevels":
+				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
+				for(int i=0;i<10;i++){
+				mastered = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
+				failed = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
+				levelStats[i] = ((failed+mastered)!=0)?mastered/(failed+mastered):0;
+				}
+				sc.onModelChange("levelsLoaded", levelStats);
+				
 				break;
 			}
 		}else if(sc instanceof VideoController){

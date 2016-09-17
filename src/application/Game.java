@@ -17,6 +17,7 @@ import javafx.scene.control.ButtonType;
 import resources.StoredStats.Type;
 
 public class Game {
+	public static final int WORDS_NUM = 10;
 	private List<String> wordList;
 	private boolean faulted;
 	private boolean prevFaulted;
@@ -36,7 +37,10 @@ public class Game {
 		wordList = new LinkedList<String>();
 		_level = level;
 	}
-	
+	/**
+	 * Get word list
+	 * @return
+	 */
 	public List<String> wordList(){
 		return wordList;
 	}
@@ -48,13 +52,20 @@ public class Game {
 		return gameEnded;
 	}
 	/**
+	 * Get current level.
+	 * @return
+	 */
+	public int level() {
+		return _level;
+	}
+	/**
 	 * Gets word list from file system path
 	 * @return whether the word list has been successfully fetched to the wordList variable
 	 */
 	private boolean getWordList(){
 		try {
 			File path = new File(main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-			File file = new File(path.getParent()+"/wordlist");
+			File file = new File(path.getParent()+"/spelling-lists.txt");
 			if(!file.exists()){
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setContentText("You don't have a word list!\nPlease put one in the folder that you ran the spelling app from.");
@@ -65,7 +76,15 @@ public class Game {
 			BufferedReader br = new BufferedReader(fi);
 			String line = null;
 			while((line= br.readLine())!=null){
-				wordList.add(line);
+				if(line.startsWith("%Level ")){
+					line = line.split("%Level ")[1];
+					_level = Integer.parseInt(line);
+					while(!line.startsWith("%Level ")){
+						line = br.readLine();
+						wordList.add(line);
+					}
+					break;
+				}
 			}
 			Collections.shuffle(wordList);
 			br.close();
@@ -110,7 +129,7 @@ public class Game {
 			getWordList();
 		}
 		if(!wordList.isEmpty()){
-				wordList = wordList.subList(0, (wordList.size()>=3)?3:wordList.size());
+				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
 				main.sayWord(new int[]{1},wordList.get(0));
 		}
 		//set faulted=false for first word
@@ -150,7 +169,7 @@ public class Game {
 				//mastered
 				main.tell("masteredWord",testWord);
 				faulted=false;
-				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1);
+				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1, _level);
 				// if review, remove from failedlist
 				stats.getGlobalStats().setStats(Type.FAILED, testWord, 0);
 				wordList.remove(0);
@@ -161,7 +180,7 @@ public class Game {
 			}else if(!faulted&&prevFaulted){
 				//correct after faulted => store faulted
 				main.tell("masteredWord",testWord);
-				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1);
+				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1, _level);
 				wordList.remove(0);
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
@@ -171,7 +190,7 @@ public class Game {
 				//faulted twice => failed
 				main.tell("failedWord",testWord);
 				faulted=false;
-				stats.getSessionStats().addStat(Type.FAILED, testWord, 1);
+				stats.getSessionStats().addStat(Type.FAILED, testWord, 1, _level);
 				wordList.remove(0);
 			}
 			if(wordList.size()!=0){
@@ -184,4 +203,5 @@ public class Game {
 			main.tell("setProgress",(wordListSize-wordList.size()+((faulted)?0.5:0))/(double)wordListSize);
 		}
 	}
+	
 }
