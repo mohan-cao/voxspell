@@ -20,7 +20,7 @@
    <center>
       <VBox>
          <children>
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="300.0" prefWidth="300.0" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="300.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
                <content>
                   <Accordion fx:id="levelAccordion">
                      <panes>

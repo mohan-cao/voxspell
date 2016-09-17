@@ -15,7 +15,7 @@ public class MainMenuController extends SceneController{
 	 * @param e MouseEvent
 	 */
 	@FXML public void newQuiz(MouseEvent e){
-		application.requestSceneChange("quizMenu");
+		application.requestSceneChange("levelMenu");
 	}
 	/**
 	 * Listener for Stats view navigation button
