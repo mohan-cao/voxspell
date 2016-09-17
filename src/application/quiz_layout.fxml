@@ -69,14 +69,15 @@
                <children>
                   <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" percentWidth="64.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" percentWidth="36.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" percentWidth="87.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" percentWidth="24.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <TextArea fx:id="wordTextArea" onKeyPressed="#textAreaEnter" onKeyTyped="#textAreaType" prefHeight="80.0" prefWidth="540.0" promptText="Enter word here..." style="-fx-text-alignment: center;">
+                        <TextArea fx:id="wordTextArea" onKeyPressed="#textAreaEnter" onKeyTyped="#textAreaType" prefHeight="80.0" prefWidth="437.0" promptText="Enter word here..." style="-fx-text-alignment: center;">
                            <font>
                               <Font size="24.0" />
                            </font>
@@ -84,17 +85,29 @@
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </GridPane.margin>
                         </TextArea>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                        <AnchorPane prefHeight="100.0" prefWidth="150.0" GridPane.columnIndex="1">
                            <children>
-                              <Button fx:id="confirm" mnemonicParsing="false" onMouseClicked="#btnConfirm" prefHeight="80.0" prefWidth="157.0" text="Check" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="131.0" AnchorPane.topAnchor="10.0">
+                              <Button fx:id="confirm" mnemonicParsing="false" onMouseClicked="#btnConfirm" prefHeight="80.0" prefWidth="139.0" text="Check" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="10.0">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="repeat" layoutX="164.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#repeatWord" prefHeight="38.0" prefWidth="118.0" text="Repeat Word" />
-                              <Button fx:id="toggle" layoutX="164.0" layoutY="52.0" mnemonicParsing="false" onMouseClicked="#changeVoice" prefHeight="38.0" prefWidth="118.0" text="Change Voice" />
                            </children>
                         </AnchorPane>
+                        <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.columnIndex="2">
+                          <items>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                 <children>
+                                    <Button fx:id="repeat" mnemonicParsing="false" onMouseClicked="#repeatWord" prefHeight="45.0" prefWidth="146.0" text="Repeat Word" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <Button fx:id="toggle" mnemonicParsing="false" onMouseClicked="#changeVoice" prefHeight="45.0" prefWidth="146.0" text="Change Voice" />
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
                      </children>
                   </GridPane>
                </children>
