@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import controller.LevelController;
 import controller.QuizController;
 import controller.SceneController;
 import controller.StatsController;
@@ -229,7 +228,7 @@ public class Main extends Application implements MainInterface {
 				if(game!=null&&!game.isGameEnded()){
 					if(!game.onExit()){return;}
 					String testWord = game.wordList().get(0);
-					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1, game.level());
+					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1);
 				}
 				this.requestSceneChange("mainMenu");
 				game = null;
@@ -242,9 +241,12 @@ public class Main extends Application implements MainInterface {
 				}
 				break;
 			case "newGame":
+				//make new game, start it
+				game = new Game(this, statsModel);
 				game.startGame(false);
 				break;
 			case "reviewGame":
+				game = new Game(this, statsModel);
 				game.startGame(true);
 				break;
 			case "submitWord":
@@ -254,7 +256,7 @@ public class Main extends Application implements MainInterface {
 				//save and quit
 				if(game!=null&&!game.isGameEnded()){
 					String testWord = game.wordList().get(0);
-					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1, game.level());
+					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1);
 				}
 				game = null;
 				break;
@@ -280,39 +282,6 @@ public class Main extends Application implements MainInterface {
 				sc.onModelChange("sessionStatsLoaded", statsModel.getSessionStats());
 				break;
 			}
-		}else if(sc instanceof LevelController){
-			LevelController lc = (LevelController) sc;
-			int mastered = 0;
-			int failed = 0;
-			double[] levelStats = new double[10];
-			switch(message){
-			case "requestNewGameLevels":
-				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
-				for(int i=0;i<10;i++){
-				mastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
-				failed = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
-				levelStats[i] = ((failed+mastered)!=0)?(mastered/(double)(failed+mastered)):0;
-				}
-				sc.onModelChange("levelsLoaded", levelStats);
-				break;
-			case "requestReviewGameLevels":
-				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
-				for(int i=0;i<10;i++){
-				mastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
-				failed = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
-				levelStats[i] = ((failed+mastered)!=0)?(mastered/(double)(failed+mastered)):0;
-				}
-				sc.onModelChange("levelsLoaded", levelStats);
-				break;
-			case "startNewGame":
-				game = new Game(this, statsModel, lc.getLevelSelected());
-				this.requestSceneChange("quizMenu");
-				break;
-			case "startReviewGame":
-				game = new Game(this, statsModel, lc.getLevelSelected());
-				this.requestSceneChange("quizMenu","failed");
-				break;
-			}
 		}else if(sc instanceof VideoController){
 			switch(message){
 			case "requestVideo":
@@ -321,6 +290,9 @@ public class Main extends Application implements MainInterface {
 				break;
 			}
 		}
+		//else if (sc instanceof VideoController){
+		//messages -> pause, quit to main menu
+	//}
 	}
 	
 

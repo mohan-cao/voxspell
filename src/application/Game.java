@@ -17,7 +17,6 @@ import javafx.scene.control.ButtonType;
 import resources.StoredStats.Type;
 
 public class Game {
-	public static final int WORDS_NUM = 10;
 	private List<String> wordList;
 	private boolean faulted;
 	private boolean prevFaulted;
@@ -25,25 +24,17 @@ public class Game {
 	private StatisticsModel stats;
 	private boolean review;
 	private boolean gameEnded;
-	private int _level;
 	private MainInterface main;
 	private String voiceType;
 	private String testWord;
 	
 	public Game(MainInterface app, StatisticsModel statsModel){
-		this(app,statsModel,1);
-	}
-	public Game(MainInterface app, StatisticsModel statsModel, int level){
 		main = app;
 		stats = statsModel;
 		wordList = new LinkedList<String>();
 		voiceType = "kal_diphone"; //FIXME: CHECK WHICH VOICES ARE AVAILABLE ON ECE MACHINE
-		_level = level;
 	}
-	/**
-	 * Get word list
-	 * @return
-	 */
+	
 	public List<String> wordList(){
 		return wordList;
 	}
@@ -66,13 +57,6 @@ public class Game {
 			voiceType = "kal_diphone";
 		}
 	}
-/**
-	 * Get current level.
-	 * @return
-	 */
-	public int level() {
-		return _level;
-	}
 	
 	/**
 	 * Gets word list from file system path
@@ -81,7 +65,7 @@ public class Game {
 	private boolean getWordList(){
 		try {
 			File path = new File(main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-			File file = new File(path.getParent()+"/spelling-lists.txt");
+			File file = new File(path.getParent()+"/wordlist");
 			if(!file.exists()){
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setContentText("You don't have a word list!\nPlease put one in the folder that you ran the spelling app from.");
@@ -92,16 +76,7 @@ public class Game {
 			BufferedReader br = new BufferedReader(fi);
 			String line = null;
 			while((line= br.readLine())!=null){
-				if(line.contains("%Level "+_level)){
-					line = line.split("%Level ")[1];
-					_level = Integer.parseInt(line);
-					line = br.readLine();
-					while(!line.startsWith("%Level ")){
-						wordList.add(line);
-						line = br.readLine();
-					}
-					break;
-				}
+				wordList.add(line);
 			}
 			Collections.shuffle(wordList);
 			br.close();
@@ -146,7 +121,7 @@ public class Game {
 			getWordList();
 		}
 		if(!wordList.isEmpty()){
-				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
+				wordList = wordList.subList(0, (wordList.size()>=3)?3:wordList.size());
 				testWord = wordList.get(0);
 				main.sayWord(new int[]{1}, voiceType,wordList.get(0));
 		}
@@ -189,13 +164,12 @@ public class Game {
 			int speed = 1;
 			boolean prev2Faulted = prevFaulted;
 			prevFaulted = faulted;
-			String testWord = wordList.get(0);
 			faulted=!word.toLowerCase().equals(testWord.toLowerCase());
 			if(!faulted&&!prevFaulted){
 				//mastered
 				main.tell("masteredWord",testWord);
 				faulted=false;
-				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1, _level);
+				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1);
 				// if review, remove from failedlist
 				stats.getGlobalStats().setStats(Type.FAILED, testWord, 0);
 				wordList.remove(0);
@@ -206,7 +180,7 @@ public class Game {
 			}else if(!faulted&&prevFaulted){
 				//correct after faulted => store faulted
 				main.tell("masteredWord",testWord);
-				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1, _level);
+				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1);
 				wordList.remove(0);
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
@@ -216,7 +190,7 @@ public class Game {
 				//faulted twice => failed
 				main.tell("failedWord",testWord);
 				faulted=false;
-				stats.getSessionStats().addStat(Type.FAILED, testWord, 1, _level);
+				stats.getSessionStats().addStat(Type.FAILED, testWord, 1);
 				wordList.remove(0);
 			}
 			if(wordList.size()!=0){
