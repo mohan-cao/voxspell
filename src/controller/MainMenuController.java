@@ -1,6 +1,7 @@
 package controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
@@ -14,7 +15,7 @@ public class MainMenuController extends SceneController{
 	 * @param e MouseEvent
 	 */
 	@FXML public void newQuiz(MouseEvent e){
-		application.requestSceneChange("quizMenu");
+		application.requestSceneChange("levelMenu");
 	}
 	/**
 	 * Listener for Stats view navigation button
@@ -28,7 +29,7 @@ public class MainMenuController extends SceneController{
 	 * @param e MouseEvent
 	 */
 	@FXML public void reviewMistakes(MouseEvent e){
-		application.requestSceneChange("quizMenu","failed");
+		application.requestSceneChange("levelMenu","failed");
 	}
 	public void init(String[] args) {
 		// Nothing to initialise

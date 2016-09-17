@@ -4,8 +4,13 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class StoredStats implements Serializable{
+	private static final long serialVersionUID = 1L;
+	private HashMap<String,Stats> _stats;
+	private HashMap<Integer,Boolean> _unlockedLevels;
+	
 	public enum Type{
 		MASTERED,
 		FAILED,
@@ -16,13 +21,15 @@ public class StoredStats implements Serializable{
 		int mastered;
 		int failed;
 		int faulted;
-		public Stats(){
-			mastered=0;failed=0;faulted=0;
+		int level;
+		public Stats(int lvl){
+			mastered=0;failed=0;faulted=0;level=lvl;
 		}
-		public Stats(Stats stats, Stats stats2){
-			this.mastered = stats.mastered + stats2.mastered;
-			this.faulted = stats.faulted + stats2.faulted;
-			this.failed = stats.failed + stats2.failed;
+		public Stats(Stats __stats, Stats _stats2){
+			this.mastered = __stats.mastered + _stats2.mastered;
+			this.faulted = __stats.faulted + _stats2.faulted;
+			this.failed = __stats.failed + _stats2.failed;
+			this.level = _stats2.level;
 		}
 		public void add(Type t, int i){
 			switch(t){
@@ -61,70 +68,153 @@ public class StoredStats implements Serializable{
 			}
 			return null;
 		}
-		public Integer getTotal(){
+		public int getLevel(){
+			return level;
+		}
+		public int getTotal(){
 			return mastered+failed+faulted;
 		}
 	}
-	private static final long serialVersionUID = 1L;
-	private HashMap<String,Stats> stats;
-	
+	/**
+	 * Default stats constructor
+	 * Initialises at level 0 (global) by default.
+	 */
 	public StoredStats(){
 		clearStats();
+		_unlockedLevels = new HashMap<Integer,Boolean>();
+		_unlockedLevels.put(0, true);
+		_unlockedLevels.put(1, true);
 	}
-	public void clearStats(){
-		stats = new HashMap<String,Stats>();
+	/**
+	 * Unlocks a level.
+	 * @param level
+	 */
+	public void unlockLevel(int level){
+		_unlockedLevels.put(level, true);
 	}
-	public boolean setStats(Type type, String value, Integer number){
-		if(stats.get(value)==null){return false;}
-		stats.get(value).set(type, number);
+	public Integer getLevel(String key){
+		return _stats.get(key).getLevel();
+	}
+	/**
+	 * Checks if level is locked. If level does not exist, it is locked.
+	 * @param level
+	 * @return
+	 */
+	public boolean isLevelLocked(int level){
+		if(_unlockedLevels.get(level)!=null&&_unlockedLevels.get(level).booleanValue()==true){
+			return false;
+		}
 		return true;
 	}
-	public void addStat(Type type, String value, Integer n){
-		if(stats.get(value)==null){
-			stats.put(value, new Stats());
-		}
-		stats.get(value).add(type, n);
+	/**
+	 * Clears stats for all stats.
+	 */
+	public void clearStats(){
+		_stats = new HashMap<String,Stats>();
 	}
+	/**
+	 * Sets stats to all stats, defined by type, word, and occurrences
+	 * @param type
+	 * @param value
+	 * @param number
+	 * @param _level 
+	 * @return
+	 */
+	public boolean setStats(Type type, String value, Integer number){
+		if(_stats.get(value)==null){return false;}
+		_stats.get(value).set(type, number);
+		return true;
+	}
+	/**
+	 * Adds stats to all stats, defined by type, word, and occurrences for a level.
+	 * @param type type
+	 * @param value word
+	 * @param n occurrences
+	 * @param level level
+	 */
+	public void addStat(Type type, String value, Integer n, Integer level){
+		if(_stats.get(value)==null){
+			_stats.put(value, new Stats(level));
+		}
+		_stats.get(value).add(type, n);
+	}
+	/**
+	 * Adds stats object to existing stats object. Does not return new object.
+	 * @param other
+	 */
 	public void addStats(StoredStats other){
 		for(String key : other.getKeys()){
-			this.addStat(Type.MASTERED, key, other.getStat(Type.MASTERED, key));
-			this.addStat(Type.FAULTED, key, other.getStat(Type.FAULTED, key));
-			this.addStat(Type.FAILED, key, other.getStat(Type.FAILED, key));
+			this.addStat(Type.MASTERED, key, other.getStat(Type.MASTERED, key), other.getLevel(key));
+			this.addStat(Type.FAULTED, key, other.getStat(Type.FAULTED, key), other.getLevel(key));
+			this.addStat(Type.FAILED, key, other.getStat(Type.FAILED, key), other.getLevel(key));
 		}
 	}
-	
+	/**
+	 * Removes key from all stats.
+	 * @param key
+	 * @return
+	 */
 	public boolean removeKey(String key){
-		return (stats.remove(key)!=null);
+		return (_stats.remove(key)!=null);
 	}
+	/**
+	 * Get collection of keys from all stats
+	 * @return
+	 */
 	public Collection<String> getKeys(){
-		return stats.keySet();
+		return _stats.keySet();
 	}
+	/**
+	 * Get collection of keys from all stats, defined by type
+	 * @param type
+	 * @return
+	 */
 	public Collection<String> getKeys(Type type){
 		HashSet<String> set = new HashSet<String>();
-		for(String str : stats.keySet()){
-			if(stats.get(str).get(type)>0){
+		for(String str : _stats.keySet()){
+			if(_stats.get(str).get(type)>0){
 				set.add(str);
 			}
 		}
 		return set;
 	}
-	public Number getTotalStatsOfType(Type type){
+	/**
+	 * Get total stats for certain level, defined by type
+	 * @param level
+	 * @param type
+	 * @return
+	 */
+	public Integer getTotalStatsOfLevel(int level, Type type){
 		int num = 0;
-		for(String str : stats.keySet()){
-			num += stats.get(str).get(type);
+		for(String str : _stats.keySet()){
+			if(level==_stats.get(str).getLevel()){
+			num += _stats.get(str).get(type);
+			}
 		}
 		return num;
 	}
 	/**
-	 * Get stats for defined type of statistic and key
+	 * Get total stats for all levels, defined by type
+	 * @param type
+	 * @return
+	 */
+	public Integer getTotalStatsOfType(Type type){
+		int num = 0;
+		for(String str : _stats.keySet()){
+			num += _stats.get(str).get(type);
+		}
+		return num;
+	}
+	/**
+	 * Get stats for all levels, defined by type of statistic and key
 	 * @param type
 	 * @param key
 	 * @return
 	 */
 	public Integer getStat(Type type, String key){
-		if(type == Type.MASTERED){return stats.get(key).get(type);}
-		else if(type == Type.FAILED){return stats.get(key).get(type);}
-		else if(type == Type.FAULTED){return stats.get(key).get(type);}
+		if(type == Type.MASTERED){return _stats.get(key).get(type);}
+		else if(type == Type.FAILED){return _stats.get(key).get(type);}
+		else if(type == Type.FAULTED){return _stats.get(key).get(type);}
 		else{
 			return null;
 		}
