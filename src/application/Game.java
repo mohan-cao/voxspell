@@ -6,27 +6,40 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import controller.QuizController;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import resources.StoredStats.Type;
-
+/**
+ * Game model class
+ * Contains the logic for evaluating words and storing game state, and acts as the Game data model.
+ * Created on demand for "review" and "new" games.
+ * 
+ * @author Mohan Cao
+ * @author Ryan Macmillan
+ *
+ */
 public class Game {
 	public static final int WORDS_NUM = 10;
+	private StatisticsModel stats;
+	private MainInterface main;
 	private List<String> wordList;
+	
 	private boolean faulted;
 	private boolean prevFaulted;
-	private int wordListSize;
-	private StatisticsModel stats;
 	private boolean review;
 	private boolean gameEnded;
+	
+	private int wordListSize;
 	private int _level;
-	private MainInterface main;
+	private int _correct;
+	private int _incorrect;
+	
 	private String voiceType;
 	private String testWord;
 	
@@ -44,6 +57,7 @@ public class Game {
 	/**
 	 * Get word list
 	 * @return
+	 * @author Mohan Cao
 	 */
 	public List<String> wordList(){
 		return wordList;
@@ -51,12 +65,14 @@ public class Game {
 	/**
 	 * Checks if game has ended
 	 * @return true/false
+	 * @author Mohan Cao
 	 */
 	public boolean isGameEnded(){
 		return gameEnded;
 	}
 	/**
 	 * Toggles from kal_diphone voice to akl_nz_jdt_diphone or vice versa
+	 * @author Ryan Macmillan
 	 */
 	public void changeVoice(){
 		if(voiceType.equals("kal_diphone")){
@@ -68,7 +84,7 @@ public class Game {
 	}
 	/**
 	 * Get current level.
-	 * @return
+	 * @return Mohan Cao
 	 */
 	public int level() {
 		return _level;
@@ -76,6 +92,7 @@ public class Game {
 	/**
 	 * Gets word list from file system path
 	 * @return whether the word list has been successfully fetched to the wordList variable
+	 * @author Mohan Cao/Ryan MacMillan
 	 */
 	private boolean getWordList(){
 		try {
@@ -119,13 +136,17 @@ public class Game {
 	/**
 	 * Starts the game with option for practice mode (review)
 	 * @param practice review -> true
+	 * @author Mohan Cao (Assignment 2)
 	 */
 	public void startGame(boolean practice){
 		gameEnded=false;
 		main.tell("gameStartConfigure");
 		review=false; //assume not reviewing words
 		if(practice){
-			wordList.addAll(stats.getGlobalStats().getKeys(Type.FAILED));
+			HashSet<String> set = new HashSet<String>();
+			set.addAll(stats.getGlobalStats().getKeys(Type.FAILED,_level));
+			set.addAll(stats.getSessionStats().getKeys(Type.FAILED,_level));
+			wordList.addAll(set);
 			if(wordList.size()==0){
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("");
@@ -134,8 +155,7 @@ public class Game {
 				Optional<ButtonType> response = alert.showAndWait();
 				if(response.get()==ButtonType.OK){
 					gameEnded=true;
-					main.update(new QuizController(), "quitToMainMenu_onClick");
-					main.requestSceneChange("mainMenu");
+					main.requestSceneChange("levelMenu","failed");
 				}
 				return;
 			}
@@ -157,6 +177,7 @@ public class Game {
 	
 	/**
 	 * Repeat the word using festival
+	 * @author Ryan Macmillan
 	 */
 	public void repeatWord(){
 		main.sayWord(new int[]{1}, voiceType, testWord);
@@ -165,6 +186,7 @@ public class Game {
 	/**
 	 * Called when game is going to exit.
 	 * @return true (default) or false to indicate cancellation of exiting
+	 * @author Mohan Cao
 	 */
 	public boolean onExit(){
 		if(gameEnded){
@@ -182,6 +204,7 @@ public class Game {
 	/**
 	 * Check word against game logic
 	 * @param word
+	 * @author Mohan Cao (Assignment 2)
 	 */
 	public void submitWord(String word){
 		if(!gameEnded){
@@ -195,8 +218,11 @@ public class Game {
 				main.tell("masteredWord",testWord);
 				faulted=false;
 				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1, _level);
+				//if not review, then add one correct
+				if(!review) _correct++;
 				// if review, remove from failedlist
 				stats.getGlobalStats().setStats(Type.FAILED, testWord, 0);
+				stats.getSessionStats().setStats(Type.FAILED, testWord, 0);
 				wordList.remove(0);
 			}else if(faulted&&!prevFaulted){
 				//faulted once => set faulted
@@ -206,6 +232,8 @@ public class Game {
 				//correct after faulted => store faulted
 				main.tell("masteredWord",testWord);
 				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1, _level);
+				// if not review, then add one correct
+				if(!review) _correct++;
 				wordList.remove(0);
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
@@ -217,12 +245,14 @@ public class Game {
 				faulted=false;
 				stats.getSessionStats().addStat(Type.FAILED, testWord, 1, _level);
 				wordList.remove(0);
+				// if not review, then add one incorrect
+				if(!review) _incorrect++;
 			}
 			if(wordList.size()!=0){
 				testWord = wordList.get(0);
 				main.sayWord(new int[]{speed},voiceType, wordList.get(0));
 			}else{
-				main.tell("resetGame");
+				main.tell("resetGame",_correct,(_correct+_incorrect));
 				gameEnded=true;
 			}
 			//set progressbars for progress through quiz and also denote additional separation for faulted words
@@ -230,7 +260,11 @@ public class Game {
 		}
 	}
 	
-	
+	/**
+	 * Gets test word
+	 * @return
+	 * @author Ryan Macmillan
+	 */
 	public String getTestWord(){
 		return testWord;
 	}

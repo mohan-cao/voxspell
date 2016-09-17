@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class StoredStats implements Serializable{
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 	private HashMap<String,Stats> _stats;
 	private HashMap<Integer,Boolean> _unlockedLevels;
 	
@@ -17,7 +17,7 @@ public class StoredStats implements Serializable{
 		FAULTED
 	}
 	class Stats implements Serializable{
-		private static final long serialVersionUID = 2L;
+		private static final long serialVersionUID = 3L;
 		int mastered;
 		int failed;
 		int faulted;
@@ -173,6 +173,20 @@ public class StoredStats implements Serializable{
 		HashSet<String> set = new HashSet<String>();
 		for(String str : _stats.keySet()){
 			if(_stats.get(str).get(type)>0){
+				set.add(str);
+			}
+		}
+		return set;
+	}
+	/**
+	 * Get collection of keys from stats of a certain level, defined by type
+	 * @param type
+	 * @return
+	 */
+	public Collection<String> getKeys(Type type, int level){
+		HashSet<String> set = new HashSet<String>();
+		for(String str : _stats.keySet()){
+			if(_stats.get(str).get(type)>0 && _stats.get(str).getLevel()==level){
 				set.add(str);
 			}
 		}

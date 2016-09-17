@@ -5,8 +5,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import javafx.scene.control.Alert;
 import resources.StoredStats;
-
+/**
+ * Statistics model class
+ * Acts as the statistics data model. Stores serializable StoredStats objects
+ * 
+ * @author Mohan Cao
+ *
+ */
 public class StatisticsModel {
 	public static final String STATS_PATH = System.getProperty("user.home")+"/.user/stats.ser";
 	private StoredStats sessionStats;
@@ -49,7 +56,8 @@ public class StatisticsModel {
 			if(temp instanceof StoredStats){
 				globalStats = (StoredStats)temp;
 			}else{
-				throw new RuntimeException("Stats file corrupted or outdated, please delete stats file.");
+				Alert alert = new Alert(Alert.AlertType.INFORMATION, "Your stats file was corrupted or outdated.\nIt is now updated to a newer version");
+				globalStats = new StoredStats();
 			}
 		}
 	}

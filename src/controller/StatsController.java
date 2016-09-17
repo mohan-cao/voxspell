@@ -113,10 +113,14 @@ public class StatsController extends SceneController{
 				ArrayList<String> keys = new ArrayList<String>(stats.getKeys());
 				Collections.sort(keys);
 				for(String key : keys){
+					int mastered = stats.getStat(Type.MASTERED, key);
+					int failed = stats.getStat(Type.FAILED, key);
+					int faulted = stats.getStat(Type.FAULTED, key);
+					if(mastered+failed+faulted==0){continue;}
 					sb.append("Word: "+key+"\n");
-					sb.append("Mastered: "+stats.getStat(Type.MASTERED, key)+"\n");
-					sb.append("Failed: "+stats.getStat(Type.FAILED, key)+"\n");
-					sb.append("Faulted: "+stats.getStat(Type.FAULTED, key)+"\n\n");
+					sb.append("Mastered: "+mastered+"\n");
+					sb.append("Failed: "+failed+"\n");
+					sb.append("Faulted: "+faulted+"\n\n");
 				}
 				if(sb.length()==0){return "No stats to display :(\nGo and do some quizzes";}
 				return sb.toString();

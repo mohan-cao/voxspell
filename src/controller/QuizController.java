@@ -75,7 +75,7 @@ public class QuizController extends SceneController{
 	 */
 	@FXML
 	public void textAreaType(KeyEvent ke){
-		if(ke.getCharacter().matches("[^A-Za-z]")){
+		if(ke.getCharacter().matches("[^A-Za-z']")){
 			ke.consume();
 		}
 	}
@@ -169,6 +169,8 @@ public class QuizController extends SceneController{
 			correctWordLabel.setText("Please spell the spoken words");
 			break;
 		case "resetGame":
+			outputLabel.setText("Well done!");
+			correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct.");
 			wordTextArea.setDisable(true);
 			confirm.setText("Restart?");
 			break;

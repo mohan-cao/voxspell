@@ -28,32 +28,14 @@ public class LevelController extends SceneController {
 	
 	
 	@FXML public void initialize(){
-		//empty for subclasses to override
-		levelAccordion.getPanes().clear();
-		/*
-		 * TODO: doesn't really work yet (autoresize based on content width)
-		 */
-		levelAccordion.getPanes().addListener(new ListChangeListener<TitledPane>(){
-
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends TitledPane> c) {
-				double prefWidth = levelAccordion.getWidth();
-				for(TitledPane t : levelAccordion.getPanes()){
-					if(t.getPrefWidth()>prefWidth){
-						prefWidth = t.getPrefWidth();
-					}
-				}
-				levelAccordion.setPrefWidth(prefWidth);
-			}
-
-			
-		});
 	}
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
 		application.requestSceneChange("mainMenu");
 	}
 	public void init(String[] args) {
-		// TODO Auto-generated method stub
+		//empty for subclasses to override
+		levelAccordion.getPanes().clear();
 		application.update(this, "levelViewLoaded");
 		if(args!=null && args.length>0 && args[0].equals("failed")){
 			review = true;

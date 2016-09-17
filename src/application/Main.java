@@ -33,7 +33,15 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import resources.StoredStats;
 import resources.StoredStats.Type;
-
+/**
+ * Main entry class (Application)
+ * This class is the entry to the JavaFX application
+ * Acts as the application model
+ * 
+ * @author Mohan Cao
+ * @author Ryan Macmillan
+ *
+ */
 public class Main extends Application implements MainInterface {
 	private Map<String,Scene> screens; //maps keys to scenes
 	private Map<String,FXMLLoader> screenFXMLs; //maps keys to fxmlloaders, needed to get controllers
@@ -159,12 +167,6 @@ public class Main extends Application implements MainInterface {
 		//propagate + notify currentController (view-controller) of changes
 		currentController.onModelChange(message, objectParams);
 	}
-	
-	
-	
-	
-	
-	
 	/**
 	 * Creates a new process of Festival that says a word
 	 * @param speed
