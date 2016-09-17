@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class StoredStats implements Serializable{
 	private static final long serialVersionUID = 3L;
@@ -92,6 +93,18 @@ public class StoredStats implements Serializable{
 	public void unlockLevel(int level){
 		_unlockedLevels.put(level, true);
 	}
+	/**
+	 * Get a set of all unlocked levels
+	 * @return
+	 */
+	public Set<Integer> getUnlockedLevelSet(){
+		return _unlockedLevels.keySet();
+	}
+	/**
+	 * Gets the level of a word
+	 * @param key
+	 * @return
+	 */
 	public Integer getLevel(String key){
 		return _stats.get(key).getLevel();
 	}
@@ -147,6 +160,7 @@ public class StoredStats implements Serializable{
 			this.addStat(Type.MASTERED, key, other.getStat(Type.MASTERED, key), other.getLevel(key));
 			this.addStat(Type.FAULTED, key, other.getStat(Type.FAULTED, key), other.getLevel(key));
 			this.addStat(Type.FAILED, key, other.getStat(Type.FAILED, key), other.getLevel(key));
+			this._unlockedLevels.putAll(other._unlockedLevels);
 		}
 	}
 	/**

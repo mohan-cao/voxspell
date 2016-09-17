@@ -9,10 +9,17 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import controller.LevelController;
@@ -21,6 +28,8 @@ import controller.SceneController;
 import controller.StatsController;
 import controller.VideoController;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -49,7 +58,7 @@ public class Main extends Application implements MainInterface {
 	private StatisticsModel statsModel;
 	private Game game;
 	private Task<Integer> festivalTask;
-	Stage stage;
+	Stage _stage;
 	
 	{
 		screens = new HashMap<String, Scene>();
@@ -58,7 +67,7 @@ public class Main extends Application implements MainInterface {
 	}
 	
 	public void start(Stage primaryStage) {
-		this.stage = primaryStage;
+		this._stage = primaryStage;
 		buildMainScenes();
 		try {
 			primaryStage.setTitle("VoxSpell v0.1.3-b");
@@ -143,14 +152,28 @@ public class Main extends Application implements MainInterface {
 	public Collection<String> getAvailableSceneKeys(){
 		return screens.keySet();
 	}
-	
+	/**
+	 * Request scene change, by default the current stage, with data parameters
+	 */
 	public boolean requestSceneChange(String key, String... data) {
 		if(screens.containsKey(key)){
-			stage.hide();
-			stage.setScene(screens.get(key));
 			currentController = screenFXMLs.get(key).getController();
 			currentController.setApplication(this);
 			currentController.init(data);
+		}
+		return requestSceneChange(key,_stage,data);
+	}
+	/**
+	 * Request scene change in particular stage with data parameters
+	 * @param key
+	 * @param stage
+	 * @param data
+	 * @return
+	 */
+	public boolean requestSceneChange(String key, Stage stage, String... data) {
+		if(screens.containsKey(key)){
+			stage.hide();
+			stage.setScene(screens.get(key));
 			stage.show();
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>(){
 				public void handle(WindowEvent event) {
@@ -223,9 +246,8 @@ public class Main extends Application implements MainInterface {
 	 * @param sc
 	 */
 	public void update(SceneController sc, String message){
-		//TODO
+		//TODO REFACTOR LIKE CRAZY
 		if(sc instanceof QuizController){
-			QuizController qc = (QuizController)sc;
 			switch(message){
 			case "quitToMainMenu_onClick":
 				if(game!=null&&!game.isGameEnded()){
@@ -238,10 +260,40 @@ public class Main extends Application implements MainInterface {
 				break;
 			case "btnConfirm_onClick":
 				if(game!=null&&!game.isGameEnded()){
-					qc.validateAndSubmitInput();
+					try {
+						Method method = sc.getClass().getMethod("validateAndSubmitInput");
+						method.invoke(sc);
+					} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						e.printStackTrace();
+					}
 				}else{
 					game.startGame();
 				}
+				break;
+			case "nextLevel":
+				boolean review = game.isReview();
+				game = new Game(this, statsModel, game.level()+1);
+				game.startGame(review);
+				break;
+			case "videoReward":
+				Stage newWindow = new Stage();
+				Main main = this;
+				if(screens.containsKey("videoReward")){
+					VideoController controller = screenFXMLs.get("videoReward").getController();
+					requestSceneChange("videoReward",newWindow);
+					controller.setApplication(main);
+					controller.init(null);
+					newWindow.setOnCloseRequest(event->{
+							controller.cleanup();
+					});
+				}
+				newWindow.show();
+				break;
+			case "changeVoice_onClick":
+				game.changeVoice();
+				break;
+			case "repeatWord_onClick":
+				game.repeatWord();
 				break;
 			case "newGame":
 				game.startGame(false);
@@ -250,7 +302,14 @@ public class Main extends Application implements MainInterface {
 				game.startGame(true);
 				break;
 			case "submitWord":
-				game.submitWord(qc.getTextAreaInput());
+				try {
+					Method method = sc.getClass().getMethod("getTextAreaInput");
+					String word = (String) method.invoke(sc);
+					game.submitWord(word);
+				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				
 				break;
 			case "cleanup":
 				//save and quit
@@ -260,15 +319,8 @@ public class Main extends Application implements MainInterface {
 				}
 				game = null;
 				break;
-			case "changeVoice_onClick":
-				game.changeVoice();
-				break;
-			case "repeatWord_onClick":
-				game.repeatWord();
-				break;
 			}
 		}else if(sc instanceof StatsController){
-			StatsController stc = (StatsController)sc;
 			switch(message){
 			case "clearStats":
 				statsModel.getGlobalStats().clearStats();
@@ -285,21 +337,28 @@ public class Main extends Application implements MainInterface {
 		}else if(sc instanceof LevelController){
 			LevelController lc = (LevelController) sc;
 			
-			double[] levelStats = new double[10];
 			switch(message){
 			case "requestLevels":
+				ArrayList<Double> levelStats = new ArrayList<Double>();
 				int globalMastered = 0;
 				int globalFailed = 0;
 				int sessionMastered = 0;
 				int sessionFailed = 0;
+				Set<Integer> unlockedLevelSet = new LinkedHashSet<Integer>();
+				unlockedLevelSet.addAll(statsModel.getGlobalStats().getUnlockedLevelSet());
+				unlockedLevelSet.addAll(statsModel.getSessionStats().getUnlockedLevelSet());
+				ArrayList<Integer> unlockedLevels = new ArrayList<Integer>(unlockedLevelSet);
+				Collections.sort(unlockedLevels);
 				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
-				for(int i=0;i<10;i++){
-					globalMastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
-					globalFailed = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
-					sessionMastered = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
-					sessionFailed = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
+				for(Integer i : unlockedLevels){
+					globalMastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i, StoredStats.Type.MASTERED); //just get stats of level 1 now
+					globalFailed = statsModel.getGlobalStats().getTotalStatsOfLevel(i, StoredStats.Type.FAILED);
+					sessionMastered = statsModel.getSessionStats().getTotalStatsOfLevel(i, StoredStats.Type.MASTERED); //just get stats of level 1 now
+					sessionFailed = statsModel.getSessionStats().getTotalStatsOfLevel(i, StoredStats.Type.FAILED);
 					if((globalMastered+globalFailed+sessionMastered+sessionFailed)!=0){
-						levelStats[i] = (globalMastered+sessionMastered)/(double)(sessionFailed+sessionMastered+globalFailed+globalMastered);
+						levelStats.add(i,(globalMastered+sessionMastered)/(double)(sessionFailed+sessionMastered+globalFailed+globalMastered));
+					}else{
+						levelStats.add(i, 0d);
 					}
 				}
 				sc.onModelChange("levelsLoaded", levelStats);

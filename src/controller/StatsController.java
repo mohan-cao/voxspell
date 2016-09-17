@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import application.MainInterface;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -77,9 +76,6 @@ public class StatsController extends SceneController{
     		statsTextArea.layout();
         }
 	}
-	public void setApplication(MainInterface app) {
-		application = app;
-	}
 	
 	public void init(String[] args) {
 		barChartView.setAnimated(false);
@@ -150,15 +146,7 @@ public class StatsController extends SceneController{
 			break;
 		}
 	}
-	@Override
 	public void cleanup() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void onExit() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

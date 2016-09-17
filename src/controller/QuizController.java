@@ -10,23 +10,30 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 
 public class QuizController extends SceneController{
 	@FXML private Label outputLabel;
 	@FXML private Label correctWordLabel;
 	@FXML private TextArea wordTextArea;
 	@FXML private Button confirm;
+	@FXML private Button voiceBtn;
+	@FXML private Button repeatBtn;
 	@FXML private ProgressBar progress;
-	@FXML private Button repeat;
-	@FXML private Button toggle; 
+	@FXML private FlowPane buttonPanel;
 	
 	@FXML
 	public void initialize(){
+		Tooltip tts = new Tooltip("Change TTS voice");
+		Tooltip repeat = new Tooltip("Say the word again");
+		Tooltip.install(voiceBtn,tts);
+		Tooltip.install(repeatBtn, repeat);
 	}
 	
 	/**
 	 * Listener for change voice button
 	 * @param me MouseEvent: mouse clicked button
+	 * @author Ryan Macmillan
 	 */
 	@FXML
 	public void changeVoice(MouseEvent me){
@@ -36,6 +43,7 @@ public class QuizController extends SceneController{
 	/**
 	 * Listener for repeat word button
 	 * @param me MouseEvent: mouse clicked button
+	 * @author Ryan Macmillan
 	 */
 	@FXML
 	public void repeatWord(MouseEvent me){
@@ -45,22 +53,17 @@ public class QuizController extends SceneController{
 	/**
 	 * Listener for quit to main menu navigation button
 	 * @param me MouseEvent
+	 * @author Mohan Cao
 	 */
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
-		//save and quit to main menu
-		/*if(wordList.size()!=0){
-			if(!onExit()){return;}
-			String testWord = wordList.get(0);
-			stats.addStat(Type.FAILED, testWord, 1);
-		}
-		saveStats();*/
 		application.update(this, "quitToMainMenu_onClick");
 	}
 	/**
 	 * Listener for text area key entered
 	 * Prevents enter from entering a newline character
 	 * @param ke KeyEvent from textArea
+	 * @author Mohan Cao
 	 */
 	@FXML
 	public void textAreaEnter(KeyEvent ke){
@@ -72,6 +75,7 @@ public class QuizController extends SceneController{
 	/**
 	 * Listener for text area character typed (after being typed)
 	 * @param ke KeyEvent from textArea
+	 * @author Mohan Cao
 	 */
 	@FXML
 	public void textAreaType(KeyEvent ke){
@@ -82,20 +86,23 @@ public class QuizController extends SceneController{
 	/**
 	 * Listener for confirmation button (for marking of the word)
 	 * @param me MouseEvent
+	 * @author Mohan Cao
 	 */
 	@FXML
 	public void btnConfirm(MouseEvent me){
-		//send control signal to game to submit input,
-		/*if(!gameEnded){
-			validateAndSubmitInput();
-		}else{
-			saveStats();
-			startGame(review);
-		}*/
 		application.update(this, "btnConfirm_onClick");
+	}
+	@FXML
+	public void btnNextLevel(MouseEvent me){
+		application.update(this, "nextLevel");
+	}
+	@FXML
+	public void btnVideoReward(MouseEvent me){
+		application.update(this, "videoReward");
 	}
 	/**
 	 * Validates input before sending it to the marking algorithm
+	 * @author Mohan Cao
 	 */
 	public void validateAndSubmitInput(){
 		if(wordTextArea.getText().isEmpty()){
@@ -148,9 +155,14 @@ public class QuizController extends SceneController{
 		}else{
 			application.update(this, "newGame");
 		}
+		buttonPanel.setVisible(false);
 		
 	}
-	
+	/**
+b	 * Gets text area input
+	 * @return textarea text
+	 * @author Mohan Cao
+	 */
 	public String getTextAreaInput(){
 		return wordTextArea.getText();
 	}
@@ -158,10 +170,10 @@ public class QuizController extends SceneController{
 	public void cleanup() {
 		application.update(this, "cleanup");
 	}
-	@Override
 	public void onModelChange(String signal, Object... objectParameters) {
 		switch(signal){
 		case "gameStartConfigure":
+			buttonPanel.setVisible(false);
 			wordTextArea.setDisable(false);
 			confirm.setText("Check");		
 			wordTextArea.requestFocus();
@@ -170,7 +182,12 @@ public class QuizController extends SceneController{
 			break;
 		case "resetGame":
 			outputLabel.setText("Well done!");
-			correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct.");
+			if(objectParameters.length==2){
+				correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct.");
+			}else if(objectParameters.length==3){
+				correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct."
+					+ "\nThe last word was "+objectParameters[2]);
+			}
 			wordTextArea.setDisable(true);
 			confirm.setText("Restart?");
 			break;
@@ -196,11 +213,10 @@ public class QuizController extends SceneController{
 			break;
 		case "setProgress":
 			progress.setProgress(Double.class.cast(objectParameters[0]));
+			break;
+		case "showRewards":
+			buttonPanel.setVisible(true);
+			break;
 		}
-	}
-	@Override
-	public void onExit() {
-		// TODO Auto-generated method stub
-		
 	}
 }

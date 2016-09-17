@@ -71,6 +71,9 @@ public class Game {
 	public boolean isGameEnded(){
 		return gameEnded;
 	}
+	public boolean isReview(){
+		return review;
+	}
 	/**
 	 * Toggles from kal_diphone voice to akl_nz_jdt_diphone or vice versa
 	 * @author Ryan Macmillan
@@ -141,6 +144,8 @@ public class Game {
 	 * @author Mohan Cao (Assignment 2)
 	 */
 	public void startGame(boolean practice){
+		_correct=0;
+		_incorrect=0;
 		gameEnded=false;
 		main.tell("gameStartConfigure");
 		review=false; //assume not reviewing words
@@ -234,7 +239,7 @@ public class Game {
 				//correct after faulted => store faulted
 				main.tell("masteredWord",testWord);
 				stats.getSessionStats().addStat(Type.FAULTED,testWord, 1, _level);
-				_correct++;
+				_incorrect++;
 				wordList.remove(0);
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
@@ -251,7 +256,17 @@ public class Game {
 			if(wordList.size()!=0){
 				main.sayWord(new int[]{speed},voiceType, wordList.get(0));
 			}else{
-				main.tell("resetGame",_correct,(_correct+_incorrect));
+				//end game
+				if(prevFaulted||faulted||prev2Faulted){
+					main.tell("resetGame",_correct,(_correct+_incorrect),testWord);
+				}else{
+					main.tell("resetGame",_correct,(_correct+_incorrect));
+				}
+				
+				if((_correct/(double)(_incorrect+_correct))>=0.9){
+					stats.getSessionStats().unlockLevel(_level+1);
+					main.tell("showRewards");
+				}
 				gameEnded=true;
 			}
 			//set progressbars for progress through quiz and also denote additional separation for faulted words

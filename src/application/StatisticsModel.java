@@ -57,6 +57,7 @@ public class StatisticsModel {
 				globalStats = (StoredStats)temp;
 			}else{
 				Alert alert = new Alert(Alert.AlertType.INFORMATION, "Your stats file was corrupted or outdated.\nIt is now updated to a newer version");
+				alert.show();
 				globalStats = new StoredStats();
 			}
 		}

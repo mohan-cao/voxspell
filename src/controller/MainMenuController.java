@@ -44,9 +44,4 @@ public class MainMenuController extends SceneController{
 		// TODO Auto-generated method stub
 		
 	}
-	@Override
-	public void onExit() {
-		// TODO Auto-generated method stub
-		
-	}
 }

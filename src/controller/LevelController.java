@@ -1,8 +1,7 @@
 package controller;
 
-import javafx.collections.ListChangeListener;
-import javafx.event.Event;
-import javafx.event.EventType;
+import java.util.ArrayList;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -47,9 +46,9 @@ public class LevelController extends SceneController {
 	public void onModelChange(String fieldName, Object...objects) {
 		switch(fieldName){
 		case "levelsLoaded":
-			double[] stats = (double[])objects[0];
-			for(int i=0;i<stats.length;i++){
-				LevelPane newPane = new LevelPane(i+1);
+			ArrayList<?> stats = (ArrayList<?>)(objects[0]);
+			for(int i=1;i<stats.size();i++){
+				LevelPane newPane = new LevelPane(i);
 				VBox contentPane = new VBox();
 				Button newGameBtn = new Button("Start Game");
 				newGameBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
@@ -60,9 +59,9 @@ public class LevelController extends SceneController {
 					}
 				});
 				contentPane.getChildren().add(new Label("Mastery (words mastered/total):"));
-				contentPane.getChildren().add(new Label(Math.round(stats[i]*100)+"%"));
+				contentPane.getChildren().add(new Label(Math.round((Double)stats.get(i)*100)+"%"));
 				contentPane.getChildren().add(newGameBtn);
-				newPane.setText("Level " + (i+1));
+				newPane.setText("Level " + (i));
 				newPane.setContent(contentPane);
 				levelAccordion.getPanes().add(newPane);
 			}
@@ -76,10 +75,6 @@ public class LevelController extends SceneController {
 	
 	
 	public void cleanup() {
-		// TODO Auto-generated method stub
-		
-	}
-	public void onExit() {
 		// TODO Auto-generated method stub
 		
 	}
