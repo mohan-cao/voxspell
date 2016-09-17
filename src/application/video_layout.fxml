@@ -11,12 +11,12 @@
       <MediaView fx:id="videoView" fitHeight="364.0" fitWidth="600.0" />
       <HBox layoutY="364.0" prefHeight="36.0" prefWidth="600.0">
          <children>
-            <Button id="stopButton" fx:id="stopButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#stopVideo" prefHeight="36.0" prefWidth="300.0" text="Stop" textAlignment="CENTER">
+            <Button id="stopButton" fx:id="stopButton" mnemonicParsing="false" onMouseClicked="#stopVideo" prefHeight="36.0" prefWidth="300.0" text="Stop" textAlignment="CENTER">
                <font>
                   <Font size="18.0" />
                </font>
             </Button>
-            <Button fx:id="menuButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#quitToMainMenu" prefHeight="36.0" prefWidth="300.0" text="Main Menu">
+            <Button fx:id="menuButton" mnemonicParsing="false" onMouseClicked="#quitToMainMenu" prefHeight="36.0" prefWidth="300.0" text="Main Menu">
                <font>
                   <Font size="18.0" />
                </font>
