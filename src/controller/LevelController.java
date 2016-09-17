@@ -66,7 +66,7 @@ public class LevelController extends SceneController {
 	public void onModelChange(String fieldName, Object...objects) {
 		switch(fieldName){
 		case "levelsLoaded":
-			int[] stats = (int[])objects[0];
+			double[] stats = (double[])objects[0];
 			for(int i=0;i<stats.length;i++){
 				LevelPane newPane = new LevelPane(i+1);
 				VBox contentPane = new VBox();
@@ -79,7 +79,7 @@ public class LevelController extends SceneController {
 					}
 				});
 				contentPane.getChildren().add(new Label("Spelling accuracy"));
-				contentPane.getChildren().add(new Label("(words mastered/total): "+stats[i]));
+				contentPane.getChildren().add(new Label("(words mastered/total): "+Math.round(stats[i]*100)+"%"));
 				contentPane.getChildren().add(newGameBtn);
 				newPane.setText("Level " + (i+1));
 				newPane.setContent(contentPane);

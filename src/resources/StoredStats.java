@@ -29,6 +29,7 @@ public class StoredStats implements Serializable{
 			this.mastered = __stats.mastered + _stats2.mastered;
 			this.faulted = __stats.faulted + _stats2.faulted;
 			this.failed = __stats.failed + _stats2.failed;
+			this.level = _stats2.level;
 		}
 		public void add(Type t, int i){
 			switch(t){

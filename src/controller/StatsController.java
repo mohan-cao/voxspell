@@ -118,7 +118,7 @@ public class StatsController extends SceneController{
 					sb.append("Failed: "+stats.getStat(Type.FAILED, key)+"\n");
 					sb.append("Faulted: "+stats.getStat(Type.FAULTED, key)+"\n\n");
 				}
-				if(sb.length()==0){return "No stats to display :(";}
+				if(sb.length()==0){return "No stats to display :(\nGo and do some quizzes";}
 				return sb.toString();
 			}
 			public void succeeded(){

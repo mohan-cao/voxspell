@@ -87,7 +87,6 @@ public class Game {
 					break;
 				}
 			}
-			System.out.println(wordList);
 			Collections.shuffle(wordList);
 			br.close();
 			return true;

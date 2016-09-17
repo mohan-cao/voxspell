@@ -271,23 +271,23 @@ public class Main extends Application implements MainInterface {
 			LevelController lc = (LevelController) sc;
 			int mastered = 0;
 			int failed = 0;
-			int[] levelStats = new int[10];
+			double[] levelStats = new double[10];
 			switch(message){
 			case "requestNewGameLevels":
 				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
 				for(int i=0;i<10;i++){
-				mastered = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
-				failed = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
-				levelStats[i] = ((failed+mastered)!=0)?mastered/(failed+mastered):0;
+				mastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
+				failed = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
+				levelStats[i] = ((failed+mastered)!=0)?(mastered/(double)(failed+mastered)):0;
 				}
 				sc.onModelChange("levelsLoaded", levelStats);
 				break;
 			case "requestReviewGameLevels":
 				//faulted words do not count towards calculation of accuracy (DESIGN DECISION)
 				for(int i=0;i<10;i++){
-				mastered = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
-				failed = statsModel.getSessionStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
-				levelStats[i] = ((failed+mastered)!=0)?mastered/(failed+mastered):0;
+				mastered = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.MASTERED); //just get stats of level 1 now
+				failed = statsModel.getGlobalStats().getTotalStatsOfLevel(i+1, StoredStats.Type.FAILED);
+				levelStats[i] = ((failed+mastered)!=0)?(mastered/(double)(failed+mastered)):0;
 				}
 				sc.onModelChange("levelsLoaded", levelStats);
 				break;
@@ -308,9 +308,6 @@ public class Main extends Application implements MainInterface {
 				break;
 			}
 		}
-		//else if (sc instanceof VideoController){
-		//messages -> pause, quit to main menu
-	//}
 	}
 	
 
