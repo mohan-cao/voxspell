@@ -2,6 +2,7 @@ package application;
 import java.util.Collection;
 
 import controller.SceneController;
+import javafx.stage.Stage;
 
 public interface MainInterface {
 	public static final String STATS_PATH = System.getProperty("user.home")+"/.user/stats.ser";
@@ -12,6 +13,14 @@ public interface MainInterface {
 	 * @return
 	 */
 	public boolean requestSceneChange(String key, String... data);
+	/**
+	 * Request a scene change in the application in the Stage
+	 * @param key
+	 * @param newWindow
+	 * @param data
+	 * @return
+	 */
+	public boolean requestSceneChange(String key, Stage newWindow, String... data);
 	/**
 	 * Gets all available scene keys. Controllers can request keys for model changes
 	 * @return
@@ -32,10 +41,10 @@ public interface MainInterface {
 	public boolean writeObjectToFile(String path, Object obj);
 	
 	/**
-	 * Notifies main for update
-	 * @param sc SceneController that has changed
+	 * Called by controllers to update model
+	 * @param mUpdateEvent
 	 */
-	public void update(SceneController sc, String msg);
+	public void update(ModelUpdateEvent mUpdateEvent);
 	/**
 	 * Notifies current controller of update with message.
 	 * @param msg
@@ -48,4 +57,5 @@ public interface MainInterface {
 	 * @param string Sequence of strings
 	 */
 	public void sayWord(int[] is, String voice, String... string);
+	
 }

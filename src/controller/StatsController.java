@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import application.ModelUpdateEvent;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
@@ -28,6 +28,9 @@ public class StatsController extends SceneController{
     @FXML private Button clearStatsBtn;
     @FXML private TextArea statsTextArea;
     @FXML private ComboBox<String> statsSelection;
+    /**
+	 * Default FXML constructor, called before controller is initialized.
+	 */
 	@FXML
 	public void initialize(){
 		statsSelection.getItems().addAll("Global statistics", "Session statistics");
@@ -39,9 +42,9 @@ public class StatsController extends SceneController{
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if(newValue.equals("Global statistics")){
-					application.update(sc, "requestGlobalStats");
+					application.update(new ModelUpdateEvent(sc, "requestGlobalStats"));
 				}else if(newValue.equals("Session statistics")){
-					application.update(sc, "requestSessionStats");
+					application.update(new ModelUpdateEvent(sc, "requestSessionStats"));
 				}
 			}
 		});
@@ -54,10 +57,6 @@ public class StatsController extends SceneController{
 	public void quitToMainMenu(MouseEvent me){
 		application.requestSceneChange("mainMenu");
 	}
-	@FXML
-	public void changeStatsView(ActionEvent ae){
-		
-	}
 	/**
 	 * Listener for clear statistics button
 	 * @param me
@@ -69,25 +68,30 @@ public class StatsController extends SceneController{
         alert.setContentText("Your stats will be cleared! You can't undo this change.");
         Optional<ButtonType> response = alert.showAndWait();
         if(response.get()==ButtonType.OK){
-        	application.update(this, "clearStats");
+        	application.update(new ModelUpdateEvent(this, "clearStats"));
         	barChartView.getData().clear();
     		barChartView.layout();
     		statsTextArea.clear();
     		statsTextArea.layout();
         }
 	}
-	
+	@Override
 	public void init(String[] args) {
 		barChartView.setAnimated(false);
 		barChartView.setLegendVisible(false);
 		statsTextArea.setEditable(false);
 		if(statsSelection.getSelectionModel().getSelectedItem().equals("Global statistics")){
-		application.update(this, "requestGlobalStats");
+		application.update(new ModelUpdateEvent(this, "requestGlobalStats"));
 		}else if(statsSelection.getSelectionModel().getSelectedItem().equals("Session statistics")){
-		application.update(this, "requestSessionStats");
+		application.update(new ModelUpdateEvent(this, "requestSessionStats"));
 		}
 	}
-	
+	/**
+	 * Helper method for when the statistics change.
+	 * Updates the chart with the new data accordingly.
+	 * Detailed stats are created (in another thread) and displayed in a text area.
+	 * @param stats
+	 */
 	private void statsChange(StoredStats stats){
 		barChartView.getData().clear();
 		statsTextArea.clear();
@@ -146,6 +150,7 @@ public class StatsController extends SceneController{
 			break;
 		}
 	}
+	@Override
 	public void cleanup() {
 	}
 

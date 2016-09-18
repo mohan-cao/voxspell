@@ -9,17 +9,10 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import controller.LevelController;
@@ -28,8 +21,6 @@ import controller.SceneController;
 import controller.StatsController;
 import controller.VideoController;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -37,11 +28,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.media.Media;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import resources.StoredStats;
-import resources.StoredStats.Type;
 /**
  * Main entry class (Application)
  * This class is the entry to the JavaFX application
@@ -59,13 +47,12 @@ public class Main extends Application implements MainInterface {
 	private Game game;
 	private Task<Integer> festivalTask;
 	Stage _stage;
-	
 	{
 		screens = new HashMap<String, Scene>();
 		screenFXMLs = new HashMap<String, FXMLLoader>();
 		statsModel = new StatisticsModel(this);
 	}
-	
+	@Override
 	public void start(Stage primaryStage) {
 		this._stage = primaryStage;
 		buildMainScenes();
@@ -78,11 +65,12 @@ public class Main extends Application implements MainInterface {
 			e.printStackTrace();
 		}
 	}
+	@Override
 	public void stop(){
         currentController.cleanup();
         statsModel.sessionEnd();
 	}
-
+	@Override
 	public Object loadObjectFromFile(String path) {
 		try {
 			File file = new File(path);
@@ -97,7 +85,7 @@ public class Main extends Application implements MainInterface {
 		}
 		return null;
 	}
-	
+	@Override
 	public boolean writeObjectToFile(String path, Object obj) {
 		try {
 			File file = new File(path);
@@ -245,148 +233,21 @@ public class Main extends Application implements MainInterface {
 	 * Called by scene controller to update the main application
 	 * @param sc
 	 */
-	public void update(SceneController sc, String message){
-		//TODO REFACTOR LIKE CRAZY
-		if(sc instanceof QuizController){
-			switch(message){
-			case "quitToMainMenu_onClick":
-				if(game!=null&&!game.isGameEnded()){
-					if(!game.onExit()){return;}
-					String testWord = game.wordList().get(0);
-					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1, game.level());
-				}
-				this.requestSceneChange("mainMenu");
-				game = null;
-				break;
-			case "btnConfirm_onClick":
-				if(game!=null&&!game.isGameEnded()){
-					try {
-						Method method = sc.getClass().getMethod("validateAndSubmitInput");
-						method.invoke(sc);
-					} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						e.printStackTrace();
-					}
-				}else{
-					game.startGame();
-				}
-				break;
-			case "nextLevel":
-				boolean review = game.isReview();
-				game = new Game(this, statsModel, game.level()+1);
-				game.startGame(review);
-				break;
-			case "videoReward":
-				Stage newWindow = new Stage();
-				Main main = this;
-				if(screens.containsKey("videoReward")){
-					VideoController controller = screenFXMLs.get("videoReward").getController();
-					requestSceneChange("videoReward",newWindow);
-					controller.setApplication(main);
-					controller.init(null);
-					newWindow.setOnCloseRequest(event->{
-							controller.cleanup();
-					});
-				}
-				newWindow.show();
-				break;
-			case "changeVoice_onClick":
-				game.changeVoice();
-				break;
-			case "repeatWord_onClick":
-				game.repeatWord();
-				break;
-			case "newGame":
-				game.startGame(false);
-				break;
-			case "reviewGame":
-				game.startGame(true);
-				break;
-			case "submitWord":
-				try {
-					Method method = sc.getClass().getMethod("getTextAreaInput");
-					String word = (String) method.invoke(sc);
-					game.submitWord(word);
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
-				}
-				
-				break;
-			case "cleanup":
-				//save and quit
-				if(game!=null&&!game.isGameEnded()){
-					String testWord = game.wordList().get(0);
-					statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1, game.level());
-				}
-				game = null;
-				break;
-			}
-		}else if(sc instanceof StatsController){
-			switch(message){
-			case "clearStats":
-				statsModel.getGlobalStats().clearStats();
-				statsModel.getSessionStats().clearStats();
-				statsModel.sessionEnd();
-	    		break;
-			case "requestGlobalStats":
-				sc.onModelChange("globalStatsLoaded", statsModel.getGlobalStats());
-				break;
-			case "requestSessionStats":
-				sc.onModelChange("sessionStatsLoaded", statsModel.getSessionStats());
-				break;
-			}
-		}else if(sc instanceof LevelController){
-			LevelController lc = (LevelController) sc;
-			switch(message){
-			case "requestLevels":
-				ArrayList<Double> levelStats = new ArrayList<Double>();
-				Set<Integer> unlockedLevelSet = new LinkedHashSet<Integer>();
-				unlockedLevelSet.addAll(statsModel.getGlobalStats().getUnlockedLevelSet());
-				unlockedLevelSet.addAll(statsModel.getSessionStats().getUnlockedLevelSet());
-				ArrayList<Integer> unlockedLevels = new ArrayList<Integer>(unlockedLevelSet);
-				Collections.sort(unlockedLevels);
-				StoredStats sStats = statsModel.getGlobalStats();
-				StoredStats gStats = statsModel.getSessionStats();
-				int globalMastered = 0;
-				int globalFailed = 0;
-				int globalFaulted = 0;
-				int sessionMastered = 0;
-				int sessionFailed = 0;
-				int sessionFaulted = 0;
-				for(Integer i : unlockedLevels){
-					globalMastered = gStats.getTotalStatsOfLevel(i, StoredStats.Type.MASTERED);
-					globalFailed = gStats.getTotalStatsOfLevel(i, StoredStats.Type.FAILED);
-					globalFaulted = gStats.getTotalStatsOfLevel(i, StoredStats.Type.FAULTED);
-					sessionMastered = sStats.getTotalStatsOfLevel(i, StoredStats.Type.MASTERED);
-					sessionFailed = sStats.getTotalStatsOfLevel(i, StoredStats.Type.FAILED);
-					sessionFaulted = sStats.getTotalStatsOfLevel(i, StoredStats.Type.FAULTED);
-					if((globalMastered+globalFailed+sessionMastered+sessionFailed)!=0){
-						levelStats.add(i,(globalMastered+sessionMastered)/(double)(sessionFailed+sessionMastered+sessionFaulted+globalFailed+globalMastered+globalFaulted));
-					}else{
-						levelStats.add(i, 0d);
-					}
-				}
-				sc.onModelChange("levelsLoaded", levelStats);
-				break;
-			case "startNewGame":
-				game = new Game(this, statsModel, lc.getLevelSelected());
-				this.requestSceneChange("quizMenu");
-				break;
-			case "startReviewGame":
-				game = new Game(this, statsModel, lc.getLevelSelected());
-				this.requestSceneChange("quizMenu","failed");
-				break;
-			}
-		}else if(sc instanceof VideoController){
-			switch(message){
-			case "requestVideo":
-				Media media = new Media("http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4");
-				sc.onModelChange("videoReady", media);
-				break;
-			}
+	public void update(ModelUpdateEvent mue){
+		mue.setMain(this);
+		mue.setStatsModel(statsModel);
+		if(mue.getControllerClass().equals(QuizController.class)){
+			mue.updateFromQuizController(screens, screenFXMLs);
+		}else if(mue.getControllerClass().equals(StatsController.class)){
+			mue.updateFromStatsController();
+		}else if(mue.getControllerClass().equals(LevelController.class)){
+			mue.updateFromLevelController();
+		}else if(mue.getControllerClass().equals(VideoController.class)){
+			mue.updateFromVideoController();
 		}
 	}
 	
-
+	
 	public static void main(String[] args) {
 		launch(args);
 	}

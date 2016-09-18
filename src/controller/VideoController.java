@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 
 import application.MainInterface;
+import application.ModelUpdateEvent;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.MediaView;
@@ -56,7 +57,7 @@ public class VideoController extends SceneController {
 		
 		// The video controller acts as both a controller and a view as it has both "update" components
 		// and "listener" components
-		application.update(this, "requestVideo");
+		application.update(new ModelUpdateEvent(this, "requestVideo"));
 	}
 
 	public void cleanup() {

@@ -1,5 +1,6 @@
 package controller;
 
+import application.ModelUpdateEvent;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -37,7 +38,7 @@ public class QuizController extends SceneController{
 	 */
 	@FXML
 	public void changeVoice(MouseEvent me){
-		application.update(this, "changeVoice_onClick");
+		application.update(new ModelUpdateEvent(this, "changeVoice_onClick"));
 	}
 	
 	/**
@@ -47,7 +48,7 @@ public class QuizController extends SceneController{
 	 */
 	@FXML
 	public void repeatWord(MouseEvent me){
-		application.update(this, "repeatWord_onClick");
+		application.update(new ModelUpdateEvent(this, "repeatWord_onClick"));
 	}
 	
 	/**
@@ -57,7 +58,7 @@ public class QuizController extends SceneController{
 	 */
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
-		application.update(this, "quitToMainMenu_onClick");
+		application.update(new ModelUpdateEvent(this, "quitToMainMenu_onClick"));
 	}
 	/**
 	 * Listener for text area key entered
@@ -90,15 +91,15 @@ public class QuizController extends SceneController{
 	 */
 	@FXML
 	public void btnConfirm(MouseEvent me){
-		application.update(this, "btnConfirm_onClick");
+		application.update(new ModelUpdateEvent(this, "btnConfirm_onClick"));
 	}
 	@FXML
 	public void btnNextLevel(MouseEvent me){
-		application.update(this, "nextLevel");
+		application.update(new ModelUpdateEvent(this, "nextLevel"));
 	}
 	@FXML
 	public void btnVideoReward(MouseEvent me){
-		application.update(this, "videoReward");
+		application.update(new ModelUpdateEvent(this, "videoReward"));
 	}
 	/**
 	 * Validates input before sending it to the marking algorithm
@@ -141,7 +142,7 @@ public class QuizController extends SceneController{
 			}).start();
 			return;
 		}
-		application.update(this, "submitWord");
+		application.update(new ModelUpdateEvent(this, "submitWord"));
 		wordTextArea.setText("");
 		wordTextArea.requestFocus();
 	}
@@ -151,9 +152,9 @@ public class QuizController extends SceneController{
 	 */
 	public void init(String[] args) {
 		if(args!=null && args.length>0 && args[0].equals("failed")){
-			application.update(this, "reviewGame");
+			application.update(new ModelUpdateEvent(this, "reviewGame"));
 		}else{
-			application.update(this, "newGame");
+			application.update(new ModelUpdateEvent(this, "newGame"));
 		}
 		buttonPanel.setVisible(false);
 		
@@ -168,7 +169,7 @@ b	 * Gets text area input
 	}
 	
 	public void cleanup() {
-		application.update(this, "cleanup");
+		application.update(new ModelUpdateEvent(this, "cleanup"));
 	}
 	public void onModelChange(String signal, Object... objectParameters) {
 		switch(signal){

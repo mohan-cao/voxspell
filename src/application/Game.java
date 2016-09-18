@@ -28,6 +28,7 @@ import resources.StoredStats.Type;
  */
 public class Game {
 	public static final int WORDS_NUM = 10;
+	public static final String WORDLIST = "spelling-lists.txt";
 	private StatisticsModel stats;
 	private MainInterface main;
 	private List<String> wordList;
@@ -102,7 +103,7 @@ public class Game {
 	private boolean getWordList(){
 		try {
 			File path = new File(main.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-			File file = new File(path.getParent()+"/spelling-lists.txt");
+			File file = new File(path.getParent()+"/"+WORDLIST);
 			if(!file.exists()){
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setContentText("You don't have a word list!\nPlease put one in the folder that you ran the spelling app from.");

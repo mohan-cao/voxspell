@@ -4,34 +4,61 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+/**
+ * The serializable spelling statistics class that stores all statistics for VoxSpell
+ * @author Mohan Cao
+ *
+ */
 public class StoredStats implements Serializable{
 	private static final long serialVersionUID = 3L;
 	private HashMap<String,Stats> _stats;
 	private HashMap<Integer,Boolean> _unlockedLevels;
-	
+	/**
+	 * Defines type of statistic being stored.
+	 * @author Mohan Cao
+	 *
+	 */
 	public enum Type{
 		MASTERED,
 		FAILED,
 		FAULTED
 	}
+	/**
+	 * Objects instantiated from this class represent raw statistics
+	 * @author Mohan Cao
+	 *
+	 */
 	class Stats implements Serializable{
 		private static final long serialVersionUID = 3L;
 		int mastered;
 		int failed;
 		int faulted;
 		int level;
+		/**
+		 * Initialise stats at a certain level.
+		 * @param lvl
+		 */
 		public Stats(int lvl){
 			mastered=0;failed=0;faulted=0;level=lvl;
 		}
-		public Stats(Stats __stats, Stats _stats2){
-			this.mastered = __stats.mastered + _stats2.mastered;
-			this.faulted = __stats.faulted + _stats2.faulted;
-			this.failed = __stats.failed + _stats2.failed;
+		/**
+		 * Initialise stats by combining 2 stats objects
+		 * @param __stats
+		 * @param _stats2
+		 */
+		public Stats(Stats _stats, Stats _stats2){
+			this.mastered = _stats.mastered + _stats2.mastered;
+			this.faulted = _stats.faulted + _stats2.faulted;
+			this.failed = _stats.failed + _stats2.failed;
 			this.level = _stats2.level;
 		}
+		/**
+		 * Adds stats of type t to current stats object
+		 * @param t Type
+		 * @param i Stats
+		 */
 		public void add(Type t, int i){
 			switch(t){
 			case MASTERED:
@@ -45,6 +72,11 @@ public class StoredStats implements Serializable{
 				break;
 			}
 		}
+		/**
+		 * Sets stats of type t to current stats object
+		 * @param t Type
+		 * @param i Stats
+		 */
 		public void set(Type t, int i){
 			switch(t){
 			case MASTERED:
@@ -58,6 +90,10 @@ public class StoredStats implements Serializable{
 				break;
 			}
 		}
+		/**
+		 * Get stats of type t
+		 * @param t Type
+		 */
 		public Integer get(Type t){
 			switch(t){
 			case MASTERED:
@@ -69,9 +105,17 @@ public class StoredStats implements Serializable{
 			}
 			return null;
 		}
+		/**
+		 * Get level of current stats object
+		 * @param t Type
+		 */
 		public int getLevel(){
 			return level;
 		}
+		/**
+		 * Get total sum of mastered+failed+faulted stats
+		 * @return
+		 */
 		public int getTotal(){
 			return mastered+failed+faulted;
 		}

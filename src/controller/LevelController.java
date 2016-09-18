@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 
+import application.ModelUpdateEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -13,7 +14,11 @@ import javafx.scene.layout.VBox;
 public class LevelController extends SceneController {
 	@FXML private Accordion levelAccordion;
 	@FXML private boolean review;
-	
+	/**
+	 * A small TitledPane that remembers its level.
+	 * @author Mohan Cao
+	 *
+	 */
 	class LevelPane extends TitledPane {
 		private int _level;
 		public LevelPane(int level){
@@ -25,24 +30,38 @@ public class LevelController extends SceneController {
 		}
 	}
 	
-	
-	@FXML public void initialize(){
-	}
+	/**
+	 * Default FXML constructor, called before controller is initialized.
+	 */
+	@FXML public void initialize(){}
+	/**
+	 * Quit to main menu button
+	 * @param me
+	 */
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
 		application.requestSceneChange("mainMenu");
 	}
+	/**
+	 * Get the current actively selected level from all TitledPanes
+	 * @return
+	 */
+	public Integer getLevelSelected(){
+		return ((LevelPane)levelAccordion.getExpandedPane()).getLevel();
+	}
+	@Override
 	public void init(String[] args) {
 		//empty for subclasses to override
 		levelAccordion.getPanes().clear();
-		application.update(this, "levelViewLoaded");
+		application.update(new ModelUpdateEvent(this, "levelViewLoaded"));
 		if(args!=null && args.length>0 && args[0].equals("failed")){
 			review = true;
 		}else{
 			review = false;
 		}
-		application.update(this, "requestLevels");
+		application.update(new ModelUpdateEvent(this, "requestLevels"));
 	}
+	@Override
 	public void onModelChange(String fieldName, Object...objects) {
 		switch(fieldName){
 		case "levelsLoaded":
@@ -53,9 +72,9 @@ public class LevelController extends SceneController {
 				Button newGameBtn = new Button("Start Game");
 				newGameBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 					if(review){
-						application.update(this,"startReviewGame");
+						application.update(new ModelUpdateEvent(this,"startReviewGame"));
 					}else{
-						application.update(this,"startNewGame");
+						application.update(new ModelUpdateEvent(this,"startNewGame"));
 					}
 				});
 				contentPane.getChildren().add(new Label("Mastery (words mastered/total):"));
@@ -68,15 +87,7 @@ public class LevelController extends SceneController {
 			break;
 		}
 	}
-	public Integer getLevelSelected(){
-		return ((LevelPane)levelAccordion.getExpandedPane()).getLevel();
-	}
-	
-	
-	
-	public void cleanup() {
-		// TODO Auto-generated method stub
-		
-	}
+	@Override
+	public void cleanup() {}
 
 }

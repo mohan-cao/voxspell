@@ -1,7 +1,6 @@
 package controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
@@ -31,17 +30,10 @@ public class MainMenuController extends SceneController{
 	@FXML public void reviewMistakes(MouseEvent e){
 		application.requestSceneChange("levelMenu","failed");
 	}
-	public void init(String[] args) {
-		// Nothing to initialise
-	}
 	@Override
-	public void onModelChange(String fieldName, Object...objects ) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void init(String[] args) {}
 	@Override
-	public void cleanup() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onModelChange(String fieldName, Object...objects ) {}
+	@Override
+	public void cleanup() {}
 }
