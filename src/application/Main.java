@@ -59,7 +59,7 @@ public class Main extends Application implements MainInterface {
 		this._stage = primaryStage;
 		buildMainScenes();
 		try {
-			primaryStage.setTitle("VoxSpell v0.9.0-b");
+			primaryStage.setTitle("VoxSpell v0.9.1-b");
 			requestSceneChange("mainMenu");
 			primaryStage.show();
 			
