@@ -27,9 +27,9 @@ public class ModelUpdateEvent {
 	private final String _message;
 	private final SceneController _sc;
 	private final Class<? extends SceneController> _class;
-	private Game _game;
 	private StatisticsModel _statsModel;
 	private MainInterface _main;
+	private Game _game;
 	public ModelUpdateEvent(SceneController sc, String message){
 		_message = message;
 		_sc = sc;
@@ -68,6 +68,7 @@ public class ModelUpdateEvent {
 			}
 			_main.requestSceneChange("mainMenu");
 			_game = null;
+			sendGameUpdateRequest();
 			break;
 		case "btnConfirm_onClick":
 			if(_game!=null&&!_game.isGameEnded()){
@@ -84,6 +85,7 @@ public class ModelUpdateEvent {
 		case "nextLevel":
 			boolean review = _game.isReview();
 			_game = new Game(_main, _statsModel, _game.level()+1);
+			sendGameUpdateRequest();
 			_game.startGame(review);
 			break;
 		case "videoReward":
@@ -128,6 +130,7 @@ public class ModelUpdateEvent {
 				_statsModel.getSessionStats().addStat(Type.FAILED, testWord, 1, _game.level());
 			}
 			_game = null;
+			sendGameUpdateRequest();
 			break;
 		}
 	}
@@ -181,10 +184,12 @@ public class ModelUpdateEvent {
 			break;
 		case "startNewGame":
 			_game = new Game(_main, _statsModel, lc.getLevelSelected());
+			sendGameUpdateRequest();
 			_main.requestSceneChange("quizMenu");
 			break;
 		case "startReviewGame":
 			_game = new Game(_main, _statsModel, lc.getLevelSelected());
+			sendGameUpdateRequest();
 			_main.requestSceneChange("quizMenu","failed");
 			break;
 		}
@@ -201,4 +206,39 @@ public class ModelUpdateEvent {
 			break;
 		}
 	}
+	/**
+	 * Sets the game to the MainController's game
+	 * @param game
+	 */
+	public void setGame(Game game){
+		_game = game;
+	}
+	/**
+	 * Gets the updated game.
+	 * @return
+	 */
+	public Game getUpdatedGame(){
+		return _game;
+	}
+	/**
+	 * Sends game updated request back to main interface
+	 */
+	public void sendGameUpdateRequest(){
+		ModelUpdateEvent mue = new ModelUpdateEvent(new GameUpdater(), "updateGame");
+		mue.setGame(_game);
+		_main.update(mue);
+	}
+}
+/**
+ * Empty class representing a game update event.
+ * @author mohancao
+ *
+ */
+class GameUpdater extends SceneController {
+	@Override
+	public void init(String[] args) {}
+	@Override
+	public void cleanup() {}
+	@Override
+	public void onModelChange(String notificationString, Object... objectsParameters) {}
 }

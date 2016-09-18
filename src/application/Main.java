@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -30,6 +31,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import resources.StoredStats;
 /**
  * Main entry class (Application)
  * This class is the entry to the JavaFX application
@@ -80,7 +82,11 @@ public class Main extends Application implements MainInterface {
 			Object obj = instr.readObject();
 			instr.close();
 			return obj;
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InvalidClassException ice){
+			writeObjectToFile(path,new StoredStats());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -234,7 +240,12 @@ public class Main extends Application implements MainInterface {
 	 * @param sc
 	 */
 	public void update(ModelUpdateEvent mue){
+		//Game must be updated
+		if(mue.getControllerClass().equals(GameUpdater.class)){
+			game = mue.getUpdatedGame();
+		}
 		mue.setMain(this);
+		mue.setGame(game);
 		mue.setStatsModel(statsModel);
 		if(mue.getControllerClass().equals(QuizController.class)){
 			mue.updateFromQuizController(screens, screenFXMLs);
