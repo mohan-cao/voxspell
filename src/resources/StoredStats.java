@@ -126,9 +126,7 @@ public class StoredStats implements Serializable{
 	 */
 	public StoredStats(){
 		clearStats();
-		_unlockedLevels = new HashMap<Integer,Boolean>();
-		_unlockedLevels.put(0, true);
-		_unlockedLevels.put(1, true);
+		resetLevelProgress();
 	}
 	/**
 	 * Unlocks a level.
@@ -143,6 +141,14 @@ public class StoredStats implements Serializable{
 	 */
 	public Set<Integer> getUnlockedLevelSet(){
 		return _unlockedLevels.keySet();
+	}
+	/**
+	 * Resets all level progress
+	 */
+	public void resetLevelProgress(){
+		_unlockedLevels = new HashMap<Integer,Boolean>();
+		_unlockedLevels.put(0, true);
+		_unlockedLevels.put(1, true);
 	}
 	/**
 	 * Gets the level of a word
@@ -168,6 +174,7 @@ public class StoredStats implements Serializable{
 	 */
 	public void clearStats(){
 		_stats = new HashMap<String,Stats>();
+		resetLevelProgress();
 	}
 	/**
 	 * Sets stats to all stats, defined by type, word, and occurrences
