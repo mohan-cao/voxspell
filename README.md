@@ -20,5 +20,4 @@ The hierarchy sort of goes like this
 		/controller (controllers that take user input and process it 
 		/resources (resources such as images, videos, audio etc, and stored statistics classes)
 	spelling-lists.txt
-	wordlist *(to be phased out, and replaced by spelling-lists.txt)
 ```
