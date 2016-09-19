@@ -189,14 +189,14 @@ b	 * Gets text area input
 				correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct.");
 			}else if(objectParameters.length==3){
 				correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct."
-					+ "\nThe last word was "+objectParameters[2]);
+					+ "\nThe last word was \""+objectParameters[2]+"\"");
 			}
 			wordTextArea.setDisable(true);
 			confirm.setText("Restart?");
 			break;
 		case "masteredWord":
 			outputLabel.setText("Well done");
-			correctWordLabel.setText("Correct, the word is "+objectParameters[0]);
+			correctWordLabel.setText("Correct, the word is \""+objectParameters[0]+"\"");
 			progress.setStyle("-fx-accent: lightgreen;");
 			break;
 		case "faultedWord":
@@ -211,7 +211,7 @@ b	 * Gets text area input
 			break;
 		case "failedWord":
 			outputLabel.setText("Incorrect");
-			correctWordLabel.setText("The word was "+objectParameters[0]);
+			correctWordLabel.setText("The word was \""+objectParameters[0]+"\"");
 			progress.setStyle("-fx-accent: orangered;");
 			break;
 		case "setProgress":

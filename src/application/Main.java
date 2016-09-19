@@ -1,6 +1,7 @@
 package application;
 	
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,8 +14,9 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.Queue;
 
 import controller.LevelController;
 import controller.QuizController;
@@ -23,6 +25,7 @@ import controller.StatsController;
 import controller.VideoController;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -48,12 +51,15 @@ public class Main extends Application implements MainInterface {
 	private SceneController currentController; //current controller to displayed scene
 	private StatisticsModel statsModel;
 	private Game game;
-	private Task<Integer> festivalTask;
+	private Queue<Task<Integer>> festivalTasks;
+	private FestivalService festivalService;
 	Stage _stage;
 	{
 		screens = new HashMap<String, Scene>();
 		screenFXMLs = new HashMap<String, FXMLLoader>();
 		statsModel = new StatisticsModel(this);
+		festivalService = new FestivalService();
+		festivalTasks = new LinkedList<Task<Integer>>();
 	}
 	@Override
 	public void start(Stage primaryStage) {
@@ -72,6 +78,7 @@ public class Main extends Application implements MainInterface {
 	public void stop(){
         currentController.cleanup();
         statsModel.sessionEnd();
+        festivalService.cleanup();
 	}
 	@Override
 	public Object loadObjectFromFile(String path) {
@@ -188,53 +195,83 @@ public class Main extends Application implements MainInterface {
 		//propagate + notify currentController (view-controller) of changes
 		currentController.onModelChange(message, objectParams);
 	}
+	
+	/**
+	 * Festival service class.
+	 * @author mohan0704
+	 *
+	 */
+	class FestivalService extends Service<Integer>{
+		private Process _pb;
+		private String _voice;
+		private String[] _words;
+		private int[] _speed;
+		{
+			try {
+				Process p = new ProcessBuilder("/bin/bash","-c","type -p festival").start();
+				BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				String output = isr.readLine();
+				if(output==null||output.isEmpty()){
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setContentText("Could not find Festival text-to-speech\nsynthesiser. Sorry about that.");
+					alert.showAndWait();
+					Platform.exit();
+				}
+				_pb = new ProcessBuilder(output).start();
+				System.out.println(output);
+			} catch (IOException e) {e.printStackTrace();}
+		}
+		public final void setWordsToList(int[] speed, String... words){
+			_words = words;
+			_speed = speed;
+		}
+		public void cleanup() {
+			_pb.destroy();
+		}
+		public final void setVoice(String voice){
+			_voice = voice;
+		}
+
+		@Override
+		protected Task<Integer> createTask() {
+			final String voice = _voice;
+			final String[] words = _words;
+			final int[] speed = _speed;
+			return new Task<Integer>(){
+				protected Integer call() throws Exception {
+					BufferedWriter bw = new BufferedWriter(new PrintWriter(_pb.getOutputStream()));
+					for(int i=0;i<words.length;i++){
+						if(i<speed.length){
+							bw.write("(Parameter.set 'Duration_Stretch "+speed[i]+")");
+						}
+						bw.write("(voice_" + voice +")");
+						bw.write("(SayText \""+words[i]+"\")");
+					}
+					bw.flush();
+					return 0;
+				}
+				public void succeeded(){
+					if(!festivalTasks.isEmpty()){
+						Task<Integer> task = festivalTasks.poll();
+						new Thread(task).start();
+					}
+				}
+			};
+		}
+		
+	}
 	/**
 	 * Creates a new process of Festival that says a word
 	 * @param speed
 	 * @param words
 	 */
 	public void sayWord(final int[] speed, final String voiceType, final String... words){
-		if(festivalTask!=null){
-			festivalTask.cancel(true);
+		festivalService.setVoice(voiceType);
+		festivalService.setWordsToList(speed, words);
+		if(!festivalTasks.isEmpty()){
+			festivalTasks.add(festivalService.createTask());
 		}
-		festivalTask = new Task<Integer>(){
-			private Process process;
-			@Override
-			protected Integer call() throws Exception {
-				ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c", "festival --pipe");
-				process = pb.start();
-				PrintWriter pw = new PrintWriter(process.getOutputStream());
-				for(int i=0;i<words.length;i++){
-					if(i<speed.length){
-						pw.println("(Parameter.set 'Duration_Stretch "+speed[i]+")");
-					}
-					pw.println("(voice_" + voiceType +")");
-					pw.println("(SayText \""+words[i]+"\")");
-				}
-				pw.println("(quit)");
-				pw.close();
-				return process.waitFor();
-			}
-			public void succeeded(){
-				super.succeeded();
-				try {
-					if(get()!=0){
-						//couldn't find festival
-						System.out.println(get());
-						Alert alert = new Alert(AlertType.ERROR);
-						alert.setContentText("Could not find Festival text-to-speech\nsynthesiser. Sorry about that.");
-						alert.showAndWait();
-						Platform.exit();
-					}
-				} catch (InterruptedException | ExecutionException e) {
-					// TODO Auto-generated catch block
-					process.destroy();
-				}
-			}
-			public void failed(){
-				process.destroy();
-			}
-		};
+		Task<Integer> festivalTask = festivalService.createTask();
 		new Thread(festivalTask).start();
 	}
 	/**

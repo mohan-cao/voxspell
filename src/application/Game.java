@@ -184,7 +184,7 @@ public class Game {
 		}
 		if(!wordList.isEmpty()){
 				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
-				main.sayWord(new int[]{SAY_SPEED_INTRO,SAY_SPEED_DEFAULT},voiceType,"Welcome. Please spell the spoken words.",wordList.get(0));
+				main.sayWord(new int[]{SAY_SPEED_INTRO,SAY_SPEED_DEFAULT},voiceType,"Please spell the spoken words.",wordList.get(0));
 		}
 		//set faulted=false for first word
 		main.tell("setProgress",0d);
