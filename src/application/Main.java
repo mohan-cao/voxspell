@@ -144,9 +144,8 @@ public class Main extends Application implements MainInterface {
 							alert.setContentText("FFMPEG does not work on this system"); //or the programmer did something wrong
 							alert.showAndWait();
 						}
-					} catch (InterruptedException ie){
-						ie.printStackTrace();
-					} catch(ExecutionException e) {
+					} catch (InterruptedException | ExecutionException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -296,8 +295,7 @@ public class Main extends Application implements MainInterface {
 					Platform.exit();
 				}
 				_pb = new ProcessBuilder(output).start();
-				System.out.println(output);
-			} catch (IOException e) {e.printStackTrace();}
+			} catch (IOException e) {System.err.println("IOException");}
 		}
 		public final void setWordsToList(int[] speed, String... words){
 			_words = words;
