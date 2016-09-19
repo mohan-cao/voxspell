@@ -1,7 +1,10 @@
 package application;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -202,8 +205,15 @@ public class ModelUpdateEvent {
 	public void updateFromVideoController(){
 		switch(_message){
 		case "requestVideo":
-			Media media = new Media("http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4");
-			_sc.onModelChange("videoReady", media);
+			try {
+				String home = System.getProperty("user.home");
+				File videoFile = new File(home + "/.user/SpedUpReward.mp4");
+				URL url = videoFile.toURI().toURL();
+				Media media = new Media(url.toString());
+				_sc.onModelChange("videoReady", media);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
 			break;
 		}
 	}
