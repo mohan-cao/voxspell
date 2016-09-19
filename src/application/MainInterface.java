@@ -1,7 +1,6 @@
 package application;
 import java.util.Collection;
 
-import controller.SceneController;
 import javafx.stage.Stage;
 
 public interface MainInterface {

@@ -99,6 +99,7 @@ public class ModelUpdateEvent {
 						controller.cleanup();
 				});
 			}
+			newWindow.setResizable(false);
 			newWindow.show();
 			break;
 		case "changeVoice_onClick":

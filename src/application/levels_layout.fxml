@@ -7,19 +7,25 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LevelController">
    <center>
       <VBox>
          <children>
+            <StackPane />
             <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="300.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
                <content>
                   <Accordion fx:id="levelAccordion">
@@ -59,12 +65,27 @@
       </VBox>
    </center>
    <top>
-      <HBox nodeOrientation="RIGHT_TO_LEFT" prefWidth="300.0" BorderPane.alignment="CENTER">
+      <GridPane BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+            <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#quitToMainMenu" text="Quit to main menu">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
+            <Label alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" text="Select your level" textAlignment="CENTER" GridPane.halignment="LEFT">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Button mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#quitToMainMenu" text="Quit to main menu" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
                <graphic>
                   <ImageView fitHeight="10.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -75,14 +96,11 @@
                      </viewport>
                   </ImageView>
                </graphic>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
             </Button>
          </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </HBox>
+      </GridPane>
    </top>
 </BorderPane>
