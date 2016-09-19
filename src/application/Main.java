@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 
 import controller.LevelController;
 import controller.QuizController;
@@ -68,7 +69,7 @@ public class Main extends Application implements MainInterface {
 		buildMainScenes();
 		setupVideoFile();
 		try {
-			primaryStage.setTitle("VoxSpell v0.9.2-b");
+			primaryStage.setTitle("VoxSpell v0.9.3-b");
 			requestSceneChange("mainMenu");
 			primaryStage.show();
 			
@@ -127,11 +128,10 @@ public class Main extends Application implements MainInterface {
 				"ffmpeg -i ~/.user/BigBuckBunny.mp4 -filter_complex \"[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" -strict -2 ~/.user/SpedUpReward.mp4");
 		try {
 			copyFile(video,destination);
-			Process process = pb.start();
-			
 			Task<Integer> ffmpegTask = new Task<Integer>() {
 				@Override
 				protected Integer call() throws Exception {
+					Process process = pb.start(); //probably better to put it in the task, which will be disposed when method ends.
 					return process.waitFor();
 				}
 
@@ -141,11 +141,12 @@ public class Main extends Application implements MainInterface {
 						if (get() != 0) {
 							// couldn't find festival
 							Alert alert = new Alert(AlertType.ERROR);
-							alert.setContentText(
-									"FFMPEG does not work on this system"); //or the programmer did something wrong
+							alert.setContentText("FFMPEG does not work on this system"); //or the programmer did something wrong
 							alert.showAndWait();
 						}
-					} catch (InterruptedException | ExecutionException e) {
+					} catch (InterruptedException ie){
+						ie.printStackTrace();
+					} catch(ExecutionException e) {
 						e.printStackTrace();
 					}
 				}
