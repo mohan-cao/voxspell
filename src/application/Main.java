@@ -22,6 +22,7 @@ import controller.SceneController;
 import controller.StatsController;
 import controller.VideoController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -190,50 +191,45 @@ public class Main extends Application implements MainInterface {
 	 * @param words
 	 */
 	public void sayWord(final int[] speed, final String voiceType, final String... words){
-		ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c", "festival");
-		try {
-			if(festivalTask!=null){
-				festivalTask.cancel(true);
-			}
-			Process process = pb.start();
-			PrintWriter pw = new PrintWriter(process.getOutputStream());
-			for(int i=0;i<words.length;i++){
-				if(i<speed.length){
-					pw.println("(Parameter.set 'Duration_Stretch "+speed[i]+")");
-				}
-				pw.println("(voice_" + voiceType +")");
-				pw.println("(SayText \""+words[i]+"\")");
-			}
-			pw.println("(quit)");
-			pw.close();
-			festivalTask = new Task<Integer>(){
-				@Override
-				protected Integer call() throws Exception {
-					return process.waitFor();
-				}
-				public void succeeded(){
-					super.succeeded();
-					try {
-						if(get()!=0){
-							//couldn't find festival
-							Alert alert = new Alert(AlertType.ERROR);
-							alert.setContentText("Could not find Festival text-to-speech\nsynthesiser. Sorry about that.");
-							alert.showAndWait();
-						}
-					} catch (InterruptedException | ExecutionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			};
-			new Thread(festivalTask).start();
-			
-		} catch (IOException e) {
-			//couldn't find BASH
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setContentText("This program does not work on non-Linux systems at this time. Sorry about that.");
-			alert.showAndWait();
+		if(festivalTask!=null){
+			festivalTask.cancel(true);
 		}
+		festivalTask = new Task<Integer>(){
+			private Process process;
+			@Override
+			protected Integer call() throws Exception {
+				ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c", "\"festival --tts\"");
+				process = pb.start();
+				PrintWriter pw = new PrintWriter(process.getOutputStream());
+				for(int i=0;i<words.length;i++){
+					if(i<speed.length){
+						pw.println("(Parameter.set 'Duration_Stretch "+speed[i]+")");
+					}
+					pw.println("(voice_" + voiceType +")");
+					pw.println("(SayText \""+words[i]+"\")");
+				}
+				pw.println("(quit)");
+				pw.close();
+				return process.waitFor();
+			}
+			public void succeeded(){
+				super.succeeded();
+				try {
+					if(get()!=0){
+						//couldn't find festival
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setContentText("Could not find Festival text-to-speech\nsynthesiser. Sorry about that.");
+						alert.showAndWait();
+						Platform.exit();
+					}
+				} catch (InterruptedException | ExecutionException e) {
+					// TODO Auto-generated catch block
+					process.destroy();
+					e.printStackTrace();
+				}
+			}
+		};
+		new Thread(festivalTask).start();
 	}
 	/**
 	 * Called by scene controller to update the main application
