@@ -160,11 +160,9 @@ public class Game {
 				alert.setTitle("");
 				alert.setHeaderText("No words to review");
 				alert.setContentText("You haven't any words to review!\nDo a spelling quiz first.");
-				Optional<ButtonType> response = alert.showAndWait();
-				if(response.get()==ButtonType.OK){
-					gameEnded=true;
-					main.requestSceneChange("levelMenu","failed");
-				}
+				alert.showAndWait();
+				gameEnded=true;
+				main.requestSceneChange("levelMenu","failed");
 				return;
 			}
 			Collections.shuffle(wordList);

@@ -151,15 +151,18 @@ public class Main extends Application implements MainInterface {
 	 * Request scene change, by default the current stage, with data parameters
 	 */
 	public boolean requestSceneChange(String key, String... data) {
+		boolean success = false;
 		if(screens.containsKey(key)){
 			currentController = screenFXMLs.get(key).getController();
 			currentController.setApplication(this);
+			success = requestSceneChange(key,_stage,data);
 			currentController.init(data);
 		}
-		return requestSceneChange(key,_stage,data);
+		return success;
 	}
 	/**
 	 * Request scene change in particular stage with data parameters
+	 * Does not initialise the controller
 	 * @param key
 	 * @param stage
 	 * @param data
