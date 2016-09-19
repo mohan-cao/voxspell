@@ -178,8 +178,10 @@ b	 * Gets text area input
 			wordTextArea.setDisable(false);
 			confirm.setText("Check");		
 			wordTextArea.requestFocus();
-			outputLabel.setText("Quiz start!");
-			correctWordLabel.setText("Please spell the spoken words");
+			outputLabel.setText("Level "+(int)objectParameters[0]);
+			correctWordLabel.setText("Please spell the spoken words.\n"
+					+ "Feel free to replay the word anytime with the right side buttons.\n"
+					+ "You may also change the voice if you find it necessary.");
 			break;
 		case "resetGame":
 			outputLabel.setText("Well done!");

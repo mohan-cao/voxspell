@@ -29,6 +29,10 @@ import resources.StoredStats.Type;
 public class Game {
 	public static final int WORDS_NUM = 10;
 	public static final String WORDLIST = "spelling-lists.txt";
+	public static final int SAY_SPEED_INTRO = 1;
+	public static final int SAY_SPEED_DEFAULT = 1;
+	public static final int SAY_SPEED_SLOW = 2;
+	public static final int SAY_SPEED_VERYSLOW = 3;
 	private StatisticsModel stats;
 	private MainInterface main;
 	private List<String> wordList;
@@ -86,6 +90,14 @@ public class Game {
 		else {
 			voiceType = "kal_diphone";
 		}
+	}
+	/**
+	 * Returns voice type
+	 * @return
+	 */
+	public String getVoice(){
+		final String voice = voiceType;
+		return voice;
 	}
 	/**
 	 * Get current level.
@@ -148,7 +160,7 @@ public class Game {
 		_correct=0;
 		_incorrect=0;
 		gameEnded=false;
-		main.tell("gameStartConfigure");
+		main.tell("gameStartConfigure", _level);
 		review=false; //assume not reviewing words
 		if(practice){
 			HashSet<String> set = new HashSet<String>();
@@ -172,7 +184,7 @@ public class Game {
 		}
 		if(!wordList.isEmpty()){
 				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
-				main.sayWord(new int[]{1}, voiceType,wordList.get(0));
+				main.sayWord(new int[]{SAY_SPEED_INTRO,SAY_SPEED_DEFAULT},voiceType,"Welcome. Please spell the spoken words.",wordList.get(0));
 		}
 		//set faulted=false for first word
 		main.tell("setProgress",0d);
@@ -186,7 +198,7 @@ public class Game {
 	 */
 	public void repeatWord(){
 		if(!gameEnded){
-		main.sayWord(new int[]{1}, voiceType, wordList.get(0));
+		main.sayWord(new int[]{SAY_SPEED_DEFAULT}, voiceType, wordList.get(0));
 		}
 	}
 	
@@ -205,8 +217,9 @@ public class Game {
         Optional<ButtonType> response = alert.showAndWait();
         if(response.get()==ButtonType.OK){
         	return true;
+        }else{
+        	return false;
         }
-        return false;
 	}
 	/**
 	 * Check word against game logic
@@ -215,7 +228,7 @@ public class Game {
 	 */
 	public void submitWord(String word){
 		if(!gameEnded){
-			int speed = 1;
+			int speed = SAY_SPEED_DEFAULT;
 			boolean prev2Faulted = prevFaulted;
 			prevFaulted = faulted;
 			String testWord = wordList.get(0);
@@ -233,7 +246,7 @@ public class Game {
 			}else if(faulted&&!prevFaulted){
 				//faulted once => set faulted
 				main.tell("faultedWord",testWord);
-				speed = 2;
+				speed = SAY_SPEED_SLOW;
 			}else if(!faulted&&prevFaulted){
 				//correct after faulted => store faulted
 				main.tell("masteredWord",testWord);
@@ -243,7 +256,7 @@ public class Game {
 			}else if(review&&!prev2Faulted){
 				//give one more chance in review, set speed to very slow
 				main.tell("lastChanceWord",testWord);
-				speed = 3;
+				speed = SAY_SPEED_VERYSLOW;
 			}else{
 				//faulted twice => failed
 				main.tell("failedWord",testWord);

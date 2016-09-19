@@ -33,6 +33,7 @@ public class StatsController extends SceneController{
 	 */
 	@FXML
 	public void initialize(){
+		barChartView.getYAxis().setLabel("Frequency");
 		statsSelection.getItems().addAll("Global statistics", "Session statistics");
 		statsSelection.getSelectionModel().select(1);
 		statsSelection.setEditable(false);
@@ -48,6 +49,7 @@ public class StatsController extends SceneController{
 				}
 			}
 		});
+		statsSelection.layout();
 	}
 	/**
 	 * Listener for quit to main menu navigation button
