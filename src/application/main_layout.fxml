@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainMenuController">
+<StackPane stylesheets="@../resources/mainmenu.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainMenuController">
    <children>
       <GridPane prefHeight="600.0" prefWidth="800.0">
         <columnConstraints>
@@ -29,7 +29,7 @@
                         <Font size="40.0" />
                      </font>
                      <graphic>
-                        <ImageView fitHeight="110.0" fitWidth="147.0" pickOnBounds="true" preserveRatio="true" translateX="-20.0">
+                        <ImageView blendMode="MULTIPLY" fitHeight="110.0" fitWidth="147.0" pickOnBounds="true" preserveRatio="true" translateX="-20.0">
                            <image>
                               <Image url="@../resources/Notepad_icon.svg.png" />
                            </image>
@@ -45,7 +45,7 @@
                         <Font size="40.0" />
                      </font>
                      <graphic>
-                        <ImageView fitHeight="110.0" fitWidth="170.0" pickOnBounds="true" preserveRatio="true" translateX="-20.0">
+                        <ImageView blendMode="MULTIPLY" fitHeight="110.0" fitWidth="170.0" pickOnBounds="true" preserveRatio="true" translateX="-20.0">
                            <image>
                               <Image url="@../resources/list.png" />
                            </image>
@@ -61,7 +61,7 @@
                         <Font size="40.0" />
                      </font>
                      <graphic>
-                        <ImageView fitHeight="110.0" fitWidth="170.0" pickOnBounds="true" preserveRatio="true" translateX="-20.0">
+                        <ImageView blendMode="MULTIPLY" fitHeight="110.0" fitWidth="170.0" pickOnBounds="true" preserveRatio="true" translateX="-20.0">
                            <image>
                               <Image url="@../resources/graph.png" />
                            </image>
