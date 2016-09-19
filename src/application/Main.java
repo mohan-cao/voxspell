@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class Main extends Application implements MainInterface {
 	public void start(Stage primaryStage) {
 		this._stage = primaryStage;
 		buildMainScenes();
+		setupVideoFile();
 		try {
 			primaryStage.setTitle("VoxSpell v0.9.2-b");
 			requestSceneChange("mainMenu");
@@ -107,6 +109,81 @@ public class Main extends Application implements MainInterface {
 		}
 		return false;
 	}
+	
+	/**
+	 * Moves video to ~/user. Uses FFMPEG to speed up video by 4x
+	 */
+	private void setupVideoFile() {
+		File video = new File("src/resources/big_buck_bunny_1_minute.mp4");
+		File destination = new File(System.getProperty("user.home") + "/.user/BigBuckBunny.mp4");
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c",
+				"ffmpeg -i ~/.user/BigBuckBunny.mp4 -filter_complex \"[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" -strict -2 ~/.user/SpedUpReward.mp4");
+		try {
+			copyFile(video,destination);
+			Process process = pb.start();
+			
+			Task<Integer> ffmpegTask = new Task<Integer>() {
+				@Override
+				protected Integer call() throws Exception {
+					return process.waitFor();
+				}
+
+				public void succeeded() {
+					super.succeeded();
+					try {
+						if (get() != 0) {
+							// couldn't find festival
+							Alert alert = new Alert(AlertType.ERROR);
+							alert.setContentText(
+									"FFMPEG does not work on this system"); //or the programmer did something wrong
+							alert.showAndWait();
+						}
+					} catch (InterruptedException | ExecutionException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			new Thread(ffmpegTask).start();
+
+		} catch (IOException e) {
+			// couldn't find BASH
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setContentText("This program does not work on non-Linux systems at this time. Sorry about that.");
+			alert.showAndWait();
+		}
+	}
+
+	/**
+	 * Source:
+	 * http://stackoverflow.com/questions/300559/move-copy-file-operations-in-java
+	 * 
+	 * @param sourceFile
+	 * @param destFile
+	 * @throws IOException
+	 */
+	private void copyFile(File sourceFile, File destFile) throws IOException {
+		if (!destFile.exists()) {
+			destFile.createNewFile();
+		}
+		FileChannel source = null;
+		FileChannel destination = null;
+		try {
+			source = new FileInputStream(sourceFile).getChannel();
+			destination = new FileOutputStream(destFile).getChannel();
+			long count = 0;
+			long size = source.size();
+			while ((count += destination.transferFrom(source, count, size - count)) < size)
+				;
+		} finally {
+			if (source != null) {
+				source.close();
+			}
+			if (destination != null) {
+				destination.close();
+			}
+		}
+	}
+
 	
 	private void buildMainScenes(){
 		BufferedReader br = null;
