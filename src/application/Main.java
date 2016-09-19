@@ -198,7 +198,7 @@ public class Main extends Application implements MainInterface {
 			private Process process;
 			@Override
 			protected Integer call() throws Exception {
-				ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c", "\"festival --tts\"");
+				ProcessBuilder pb = new ProcessBuilder("/bin/bash","-c", "festival --pipe");
 				process = pb.start();
 				PrintWriter pw = new PrintWriter(process.getOutputStream());
 				for(int i=0;i<words.length;i++){
@@ -217,6 +217,7 @@ public class Main extends Application implements MainInterface {
 				try {
 					if(get()!=0){
 						//couldn't find festival
+						System.out.println(get());
 						Alert alert = new Alert(AlertType.ERROR);
 						alert.setContentText("Could not find Festival text-to-speech\nsynthesiser. Sorry about that.");
 						alert.showAndWait();
@@ -225,8 +226,10 @@ public class Main extends Application implements MainInterface {
 				} catch (InterruptedException | ExecutionException e) {
 					// TODO Auto-generated catch block
 					process.destroy();
-					e.printStackTrace();
 				}
+			}
+			public void failed(){
+				process.destroy();
 			}
 		};
 		new Thread(festivalTask).start();
