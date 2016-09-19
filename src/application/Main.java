@@ -1,5 +1,5 @@
 package application;
-	
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,19 +38,21 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import resources.StoredStats;
+
 /**
- * Main entry class (Application)
- * This class is the entry to the JavaFX application
- * Acts as the application model
+ * Main entry class (Application) This class is the entry to the JavaFX
+ * application Acts as the application model
  * 
  * @author Mohan Cao
  * @author Ryan Macmillan
  *
  */
 public class Main extends Application implements MainInterface {
-	private Map<String,Scene> screens; //maps keys to scenes
-	private Map<String,FXMLLoader> screenFXMLs; //maps keys to fxmlloaders, needed to get controllers
-	private SceneController currentController; //current controller to displayed scene
+	private Map<String, Scene> screens; // maps keys to scenes
+	private Map<String, FXMLLoader> screenFXMLs; // maps keys to fxmlloaders,
+													// needed to get controllers
+	private SceneController currentController; // current controller to
+												// displayed scene
 	private StatisticsModel statsModel;
 	private Game game;
 	private Queue<Task<Integer>> festivalTasks;
@@ -63,6 +65,7 @@ public class Main extends Application implements MainInterface {
 		festivalService = new FestivalService();
 		festivalTasks = new LinkedList<Task<Integer>>();
 	}
+
 	@Override
 	public void start(Stage primaryStage) {
 		this._stage = primaryStage;
@@ -72,22 +75,26 @@ public class Main extends Application implements MainInterface {
 			primaryStage.setTitle("VoxSpell v0.9.3-b");
 			requestSceneChange("mainMenu");
 			primaryStage.show();
-			
-		} catch(Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 	@Override
-	public void stop(){
-        currentController.cleanup();
-        statsModel.sessionEnd();
-        festivalService.cleanup();
+	public void stop() {
+		currentController.cleanup();
+		statsModel.sessionEnd();
+		festivalService.cleanup();
 	}
+
 	@Override
 	public Object loadObjectFromFile(String path) {
 		try {
 			File file = new File(path);
-			if(!file.exists()){return null;}
+			if (!file.exists()) {
+				return null;
+			}
 			FileInputStream fileIn = new FileInputStream(file);
 			ObjectInputStream instr = new ObjectInputStream(fileIn);
 			Object obj = instr.readObject();
@@ -95,13 +102,14 @@ public class Main extends Application implements MainInterface {
 			return obj;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} catch (InvalidClassException ice){
-			writeObjectToFile(path,new StoredStats());
+		} catch (InvalidClassException ice) {
+			writeObjectToFile(path, new StoredStats());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+
 	@Override
 	public boolean writeObjectToFile(String path, Object obj) {
 		try {
@@ -117,7 +125,7 @@ public class Main extends Application implements MainInterface {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Moves video to ~/user. Uses FFMPEG to speed up video by 4x
 	 */
@@ -127,11 +135,14 @@ public class Main extends Application implements MainInterface {
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c",
 				"ffmpeg -i ~/.user/BigBuckBunny.mp4 -filter_complex \"[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" -strict -2 ~/.user/SpedUpReward.mp4");
 		try {
-			copyFile(video,destination);
+			copyFile(video, destination);
 			Task<Integer> ffmpegTask = new Task<Integer>() {
 				@Override
 				protected Integer call() throws Exception {
-					Process process = pb.start(); //probably better to put it in the task, which will be disposed when method ends.
+					Process process = pb.start(); // probably better to put it
+													// in the task, which will
+													// be disposed when method
+													// ends.
 					return process.waitFor();
 				}
 
@@ -141,7 +152,12 @@ public class Main extends Application implements MainInterface {
 						if (get() != 0) {
 							// couldn't find festival
 							Alert alert = new Alert(AlertType.ERROR);
-							alert.setContentText("FFMPEG does not work on this system"); //or the programmer did something wrong
+							alert.setContentText("FFMPEG does not work on this system"); // or
+																							// the
+																							// programmer
+																							// did
+																							// something
+																							// wrong
 							alert.showAndWait();
 						}
 					} catch (InterruptedException | ExecutionException e) {
@@ -161,8 +177,7 @@ public class Main extends Application implements MainInterface {
 	}
 
 	/**
-	 * Source:
-	 * http://stackoverflow.com/questions/300559/move-copy-file-operations-in-java
+	 * Copy file from source to destination
 	 * 
 	 * @param sourceFile
 	 * @param destFile
@@ -174,92 +189,96 @@ public class Main extends Application implements MainInterface {
 		}
 		FileChannel source = null;
 		FileChannel destination = null;
-		try {
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = new FileOutputStream(destFile).getChannel();
-			long count = 0;
-			long size = source.size();
-			while ((count += destination.transferFrom(source, count, size - count)) < size)
-				;
-		} finally {
-			if (source != null) {
-				source.close();
-			}
-			if (destination != null) {
-				destination.close();
-			}
+
+		source = new FileInputStream(sourceFile).getChannel();
+		destination = new FileOutputStream(destFile).getChannel();
+		long count = 0;
+		long size = source.size();
+		while ((count += destination.transferFrom(source, count, size - count)) < size)
+			;
+
+		if (source != null) {
+			source.close();
 		}
+		if (destination != null) {
+			destination.close();
+		}
+
 	}
 
-	
-	private void buildMainScenes(){
+	private void buildMainScenes() {
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("config.cfg")));
+			br = new BufferedReader(
+					new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("config.cfg")));
 			String line;
 			String[] strSplit;
-			while((line = br.readLine())!=null){
+			while ((line = br.readLine()) != null) {
 				strSplit = line.split(",");
-				try{
+				try {
 					URL loc;
 					FXMLLoader fxml = null;
 					Parent menu = null;
-					if((loc=getClass().getClassLoader().getResource(strSplit[1]))!=null){
+					if ((loc = getClass().getClassLoader().getResource(strSplit[1])) != null) {
 						fxml = new FXMLLoader(loc);
-						menu = (Parent)fxml.load();
+						menu = (Parent) fxml.load();
 						screens.put(strSplit[0], new Scene(menu));
 						screenFXMLs.put(strSplit[0], fxml);
 					}
-					
-				}catch(IOException ioex){
+
+				} catch (IOException ioex) {
 					System.err.println("Scene loading error");
 					ioex.printStackTrace();
 				}
 			}
 		} catch (IOException e) {
-			
+
 			throw new RuntimeException("Config files corrupted");
 		} finally {
 			try {
-				if(br!=null){
-				br.close();
+				if (br != null) {
+					br.close();
 				}
-			} catch (IOException e1) {}
+			} catch (IOException e1) {
+			}
 		}
 	}
-	
-	public Collection<String> getAvailableSceneKeys(){
+
+	public Collection<String> getAvailableSceneKeys() {
 		return screens.keySet();
 	}
+
 	/**
 	 * Request scene change, by default the current stage, with data parameters
 	 */
 	public boolean requestSceneChange(String key, String... data) {
 		boolean success = false;
-		if(screens.containsKey(key)){
+		if (screens.containsKey(key)) {
 			currentController = screenFXMLs.get(key).getController();
 			currentController.setApplication(this);
-			success = requestSceneChange(key,_stage,data);
+			success = requestSceneChange(key, _stage, data);
 			currentController.init(data);
 		}
 		return success;
 	}
+
 	/**
-	 * Request scene change in particular stage with data parameters
-	 * Does not initialise the controller
+	 * Request scene change in particular stage with data parameters Does not
+	 * initialise the controller
+	 * 
 	 * @param key
 	 * @param stage
 	 * @param data
 	 * @return
 	 */
 	public boolean requestSceneChange(String key, Stage stage, String... data) {
-		if(screens.containsKey(key)){
+		if (screens.containsKey(key)) {
 			stage.hide();
 			stage.setScene(screens.get(key));
 			stage.show();
-			stage.setOnCloseRequest(new EventHandler<WindowEvent>(){
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				public void handle(WindowEvent event) {
-					if(game!=null&&!game.onExit()){
+					if (game != null && !game.onExit()) {
 						event.consume();
 					}
 				}
@@ -268,43 +287,50 @@ public class Main extends Application implements MainInterface {
 		}
 		return false;
 	}
+
 	public void tell(String message, Object... objectParams) {
-		//propagate + notify currentController (view-controller) of changes
+		// propagate + notify currentController (view-controller) of changes
 		currentController.onModelChange(message, objectParams);
 	}
-	
+
 	/**
 	 * Festival service class.
+	 * 
 	 * @author mohan0704
 	 *
 	 */
-	class FestivalService extends Service<Integer>{
+	class FestivalService extends Service<Integer> {
 		private Process _pb;
 		private String _voice;
 		private String[] _words;
 		private int[] _speed;
 		{
 			try {
-				Process p = new ProcessBuilder("/bin/bash","-c","type -p festival").start();
+				Process p = new ProcessBuilder("/bin/bash", "-c", "type -p festival").start();
 				BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				String output = isr.readLine();
-				if(output==null||output.isEmpty()){
+				if (output == null || output.isEmpty()) {
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setContentText("Could not find Festival text-to-speech\nsynthesiser. Sorry about that.");
 					alert.showAndWait();
 					Platform.exit();
 				}
 				_pb = new ProcessBuilder(output).start();
-			} catch (IOException e) {System.err.println("IOException");}
+			} catch (IOException e) {
+				System.err.println("IOException");
+			}
 		}
-		public final void setWordsToList(int[] speed, String... words){
+
+		public final void setWordsToList(int[] speed, String... words) {
 			_words = words;
 			_speed = speed;
 		}
+
 		public void cleanup() {
 			_pb.destroy();
 		}
-		public final void setVoice(String voice){
+
+		public final void setVoice(String voice) {
 			_voice = voice;
 		}
 
@@ -313,67 +339,71 @@ public class Main extends Application implements MainInterface {
 			final String voice = _voice;
 			final String[] words = _words;
 			final int[] speed = _speed;
-			return new Task<Integer>(){
+			return new Task<Integer>() {
 				protected Integer call() throws Exception {
 					BufferedWriter bw = new BufferedWriter(new PrintWriter(_pb.getOutputStream()));
-					for(int i=0;i<words.length;i++){
-						if(i<speed.length){
-							bw.write("(Parameter.set 'Duration_Stretch "+speed[i]+")");
+					for (int i = 0; i < words.length; i++) {
+						if (i < speed.length) {
+							bw.write("(Parameter.set 'Duration_Stretch " + speed[i] + ")");
 						}
-						bw.write("(voice_" + voice +")");
-						bw.write("(SayText \""+words[i]+"\")");
+						bw.write("(voice_" + voice + ")");
+						bw.write("(SayText \"" + words[i] + "\")");
 					}
 					bw.flush();
 					return 0;
 				}
-				public void succeeded(){
-					if(!festivalTasks.isEmpty()){
+
+				public void succeeded() {
+					if (!festivalTasks.isEmpty()) {
 						Task<Integer> task = festivalTasks.poll();
 						new Thread(task).start();
 					}
 				}
 			};
 		}
-		
+
 	}
+
 	/**
 	 * Creates a new process of Festival that says a word
+	 * 
 	 * @param speed
 	 * @param words
 	 */
-	public void sayWord(final int[] speed, final String voiceType, final String... words){
+	public void sayWord(final int[] speed, final String voiceType, final String... words) {
 		festivalService.setVoice(voiceType);
 		festivalService.setWordsToList(speed, words);
-		if(!festivalTasks.isEmpty()){
+		if (!festivalTasks.isEmpty()) {
 			festivalTasks.add(festivalService.createTask());
 		}
 		Task<Integer> festivalTask = festivalService.createTask();
 		new Thread(festivalTask).start();
 	}
+
 	/**
 	 * Called by scene controller to update the main application
+	 * 
 	 * @param sc
 	 */
-	public void update(ModelUpdateEvent mue){
-		//Game must be updated
-		if(mue.getControllerClass().equals(GameUpdater.class)){
+	public void update(ModelUpdateEvent mue) {
+		// Game must be updated
+		if (mue.getControllerClass().equals(GameUpdater.class)) {
 			game = mue.getUpdatedGame();
 		}
 		mue.setMain(this);
 		mue.setGame(game);
 		mue.setStatsModel(statsModel);
-		if(mue.getControllerClass().equals(QuizController.class)){
+		if (mue.getControllerClass().equals(QuizController.class)) {
 			mue.updateFromQuizController(screens, screenFXMLs);
-		}else if(mue.getControllerClass().equals(StatsController.class)){
+		} else if (mue.getControllerClass().equals(StatsController.class)) {
 			mue.updateFromStatsController();
-		}else if(mue.getControllerClass().equals(LevelController.class)){
+		} else if (mue.getControllerClass().equals(LevelController.class)) {
 			mue.updateFromLevelController();
-		}else if(mue.getControllerClass().equals(VideoController.class)){
+		} else if (mue.getControllerClass().equals(VideoController.class)) {
 			mue.updateFromVideoController();
 		}
 	}
-	
-	
+
 	public static void main(String[] args) {
 		launch(args);
 	}
