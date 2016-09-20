@@ -6,13 +6,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.nio.channels.FileChannel;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -127,30 +128,45 @@ public class Main extends Application implements MainInterface {
 	}
 
 	/**
-	 * Moves video to ~/user. Uses FFMPEG to speed up video by 4x
+	 * Moves video to ~/.user. Uses FFMPEG to speed up video by 4x
 	 */
 	private void setupVideoFile() {
-		File video = new File("src/resources/big_buck_bunny_1_minute.mp4");
-		File destination = new File(System.getProperty("user.home") + "/.user/BigBuckBunny.mp4");
+		/*InputStream video1 = this.getClass().getClassLoader().getResourceAsStream("resources/big_buck_bunny_1_minute.mp4");
+		File video = new File(video1);
+		File destination = new File(System.getProperty("user.home") + "/.user/BigBuckBunny.mp4");*/
+		try {
+			exportResource("/resources/big_buck_bunny_1_minute.mp4",System.getProperty("user.home")+"/.user/BigBuckBunny.mp4");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c",
 				"ffmpeg -i ~/.user/BigBuckBunny.mp4 -filter_complex \"[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" -strict -2 ~/.user/SpedUpReward.mp4");
-		try {
-			copyFile(video, destination);
+		
+			//copyFile(video, destination);
+			
 			Task<Integer> ffmpegTask = new Task<Integer>() {
 				@Override
 				protected Integer call() throws Exception {
-					Process process = pb.start(); // probably better to put it
+					Process process;
+					try {
+					process = pb.start(); // probably better to put it
 													// in the task, which will
 													// be disposed when method
 													// ends.
 					return process.waitFor();
+					} catch (IOException e) {
+						// couldn't find BASH
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setContentText("This program does not work on non-Linux systems at this time. Sorry about that.");
+						alert.showAndWait();
+						return 1;
+					}
 				}
 
 				public void succeeded() {
 					super.succeeded();
 					try {
 						if (get() != 0) {
-							// couldn't find festival
 							Alert alert = new Alert(AlertType.ERROR);
 							alert.setContentText("FFMPEG does not work on this system"); // or
 																							// the
@@ -168,12 +184,7 @@ public class Main extends Application implements MainInterface {
 			};
 			new Thread(ffmpegTask).start();
 
-		} catch (IOException e) {
-			// couldn't find BASH
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setContentText("This program does not work on non-Linux systems at this time. Sorry about that.");
-			alert.showAndWait();
-		}
+		
 	}
 
 	/**
@@ -183,15 +194,17 @@ public class Main extends Application implements MainInterface {
 	 * @param destFile
 	 * @throws IOException
 	 */
-	private void copyFile(File sourceFile, File destFile) throws IOException {
+	/*private void copyFile(File sourceFile, File destFile) throws IOException {
 		if (!destFile.exists()) {
 			destFile.createNewFile();
 		}
 		FileChannel source = null;
 		FileChannel destination = null;
+		FileInputStream fis = new FileInputStream(sourceFile);
+		FileOutputStream fos = new FileOutputStream(destFile);
 
-		source = new FileInputStream(sourceFile).getChannel();
-		destination = new FileOutputStream(destFile).getChannel();
+		source = fis.getChannel();
+		destination = fos.getChannel();
 		long count = 0;
 		long size = source.size();
 		while ((count += destination.transferFrom(source, count, size - count)) < size)
@@ -199,11 +212,38 @@ public class Main extends Application implements MainInterface {
 
 		if (source != null) {
 			source.close();
+			fis.close();
 		}
 		if (destination != null) {
 			destination.close();
+			fos.close();
 		}
 
+	}*/
+	/**
+	 * Exports internal resource to file system
+	 * @param resource path of file in jar
+	 * @param location location of file to export to
+	 * @throws IOException
+	 */
+	private void exportResource(String resource, String newFilePath) throws IOException {
+		InputStream stream = null;
+		OutputStream resStreamOut = null;
+		try {
+			stream = getClass().getResourceAsStream(resource);
+			if(stream == null)throw new IOException("Failed to get resource " + resource);
+			int readBytes;
+			byte[] buffer = new byte[4096];
+			resStreamOut = new FileOutputStream(newFilePath);
+			while ((readBytes = stream.read(buffer)) > 0) {
+				resStreamOut.write(buffer, 0, readBytes);
+			}
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			if(stream!=null)stream.close();
+			if(resStreamOut!=null)resStreamOut.close();
+		}
 	}
 
 	private void buildMainScenes() {
@@ -341,6 +381,10 @@ public class Main extends Application implements MainInterface {
 			final int[] speed = _speed;
 			return new Task<Integer>() {
 				protected Integer call() throws Exception {
+					if(_words.length==1&&_words[0].equals("...")){
+						//trying to get words to pause
+						return 0;
+					}
 					BufferedWriter bw = new BufferedWriter(new PrintWriter(_pb.getOutputStream()));
 					for (int i = 0; i < words.length; i++) {
 						if (i < speed.length) {
