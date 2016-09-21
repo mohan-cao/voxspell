@@ -12,7 +12,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.paint.Paint;
 
+/**
+ * A view-controller that is bound to the quiz_layout fxml
+ * @author mohan0704
+ *
+ */
 public class QuizController extends SceneController{
 	@FXML private Label outputLabel;
 	@FXML private Label correctWordLabel;
@@ -44,7 +50,7 @@ public class QuizController extends SceneController{
 	/**
 	 * Listener for repeat word button
 	 * @param me MouseEvent: mouse clicked button
-	 * @author Ryan Macmillan
+	 * @author Ryan MacMillan
 	 */
 	@FXML
 	public void repeatWord(MouseEvent me){
@@ -179,12 +185,14 @@ b	 * Gets text area input
 			confirm.setText("Check");		
 			wordTextArea.requestFocus();
 			outputLabel.setText("Level "+(int)objectParameters[0]);
+			outputLabel.setTextFill(Paint.valueOf("black"));
 			correctWordLabel.setText("Please spell the spoken words.\n"
 					+ "Feel free to replay the word anytime with the right side buttons.\n"
 					+ "You may also change the voice if you find it necessary.");
 			break;
 		case "resetGame":
 			outputLabel.setText("Well done!");
+			outputLabel.setTextFill(Paint.valueOf("black"));
 			if(objectParameters.length==2){
 				correctWordLabel.setText("You got "+objectParameters[0]+" out of "+objectParameters[1]+" words correct.");
 			}else if(objectParameters.length==3){
@@ -196,21 +204,25 @@ b	 * Gets text area input
 			break;
 		case "masteredWord":
 			outputLabel.setText("Well done");
+			outputLabel.setTextFill(Paint.valueOf("#44a044"));
 			correctWordLabel.setText("Correct, the word is \""+objectParameters[0]+"\"");
 			progress.setStyle("-fx-accent: lightgreen;");
 			break;
 		case "faultedWord":
 			outputLabel.setText("Try again!");
+			outputLabel.setTextFill(Paint.valueOf("#cf8f14"));
 			correctWordLabel.setText("Sorry, that wasn't quite right");
 			progress.setStyle("-fx-accent: #ffbf44;");
 			break;
 		case "lastChanceWord":
 			outputLabel.setText("Last try!");
+			outputLabel.setTextFill(Paint.valueOf("#cf8f14"));
 			correctWordLabel.setText("Let's slow it down...");
 			progress.setStyle("-fx-accent: #ffbf44;");
 			break;
 		case "failedWord":
 			outputLabel.setText("Incorrect");
+			outputLabel.setTextFill(Paint.valueOf("orangered"));
 			correctWordLabel.setText("The word was \""+objectParameters[0]+"\"");
 			progress.setStyle("-fx-accent: orangered;");
 			break;

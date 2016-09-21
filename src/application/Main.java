@@ -45,7 +45,7 @@ import resources.StoredStats;
  * application Acts as the application model
  * 
  * @author Mohan Cao
- * @author Ryan Macmillan
+ * @author Ryan MacMillan
  *
  */
 public class Main extends Application implements MainInterface {
@@ -73,7 +73,7 @@ public class Main extends Application implements MainInterface {
 		buildMainScenes();
 		setupVideoFile();
 		try {
-			primaryStage.setTitle("VoxSpell v0.9.3-b");
+			primaryStage.setTitle("VoxSpell v1.0.0");
 			requestSceneChange("mainMenu");
 			primaryStage.show();
 
@@ -129,6 +129,7 @@ public class Main extends Application implements MainInterface {
 
 	/**
 	 * Moves video to ~/.user. Uses FFMPEG to speed up video by 4x
+	 * @author Ryan MacMillan
 	 */
 	private void setupVideoFile() {
 		/*InputStream video1 = this.getClass().getClassLoader().getResourceAsStream("resources/big_buck_bunny_1_minute.mp4");
@@ -188,43 +189,12 @@ public class Main extends Application implements MainInterface {
 	}
 
 	/**
-	 * Copy file from source to destination
-	 * 
-	 * @param sourceFile
-	 * @param destFile
-	 * @throws IOException
-	 */
-	/*private void copyFile(File sourceFile, File destFile) throws IOException {
-		if (!destFile.exists()) {
-			destFile.createNewFile();
-		}
-		FileChannel source = null;
-		FileChannel destination = null;
-		FileInputStream fis = new FileInputStream(sourceFile);
-		FileOutputStream fos = new FileOutputStream(destFile);
-
-		source = fis.getChannel();
-		destination = fos.getChannel();
-		long count = 0;
-		long size = source.size();
-		while ((count += destination.transferFrom(source, count, size - count)) < size)
-			;
-
-		if (source != null) {
-			source.close();
-			fis.close();
-		}
-		if (destination != null) {
-			destination.close();
-			fos.close();
-		}
-
-	}*/
-	/**
 	 * Exports internal resource to file system
 	 * @param resource path of file in jar
 	 * @param location location of file to export to
 	 * @throws IOException
+	 * @author Mohan Cao
+	 * @author Ryan MacMillan
 	 */
 	private void exportResource(String resource, String newFilePath) throws IOException {
 		InputStream stream = null;
@@ -245,7 +215,9 @@ public class Main extends Application implements MainInterface {
 			if(resStreamOut!=null)resStreamOut.close();
 		}
 	}
-
+	/**
+	 * Builds scenes for the application
+	 */
 	private void buildMainScenes() {
 		BufferedReader br = null;
 		try {
@@ -315,6 +287,7 @@ public class Main extends Application implements MainInterface {
 		if (screens.containsKey(key)) {
 			stage.hide();
 			stage.setScene(screens.get(key));
+			stage.centerOnScreen();
 			stage.show();
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				public void handle(WindowEvent event) {
@@ -343,7 +316,7 @@ public class Main extends Application implements MainInterface {
 		private Process _pb;
 		private String _voice;
 		private String[] _words;
-		private int[] _speed;
+		private int _speed;
 		{
 			try {
 				Process p = new ProcessBuilder("/bin/bash", "-c", "type -p festival").start();
@@ -361,7 +334,7 @@ public class Main extends Application implements MainInterface {
 			}
 		}
 
-		public final void setWordsToList(int[] speed, String... words) {
+		public final void setWordsToList(int speed, String... words) {
 			_words = words;
 			_speed = speed;
 		}
@@ -369,7 +342,7 @@ public class Main extends Application implements MainInterface {
 		public void cleanup() {
 			_pb.destroy();
 		}
-
+		
 		public final void setVoice(String voice) {
 			_voice = voice;
 		}
@@ -378,18 +351,12 @@ public class Main extends Application implements MainInterface {
 		protected Task<Integer> createTask() {
 			final String voice = _voice;
 			final String[] words = _words;
-			final int[] speed = _speed;
+			final int speed = _speed;
 			return new Task<Integer>() {
 				protected Integer call() throws Exception {
-					if(_words.length==1&&_words[0].equals("...")){
-						//trying to get words to pause
-						return 0;
-					}
 					BufferedWriter bw = new BufferedWriter(new PrintWriter(_pb.getOutputStream()));
 					for (int i = 0; i < words.length; i++) {
-						if (i < speed.length) {
-							bw.write("(Parameter.set 'Duration_Stretch " + speed[i] + ")");
-						}
+						bw.write("(Parameter.set 'Duration_Stretch " + speed + ")");
 						bw.write("(voice_" + voice + ")");
 						bw.write("(SayText \"" + words[i] + "\")");
 					}
@@ -398,9 +365,14 @@ public class Main extends Application implements MainInterface {
 				}
 
 				public void succeeded() {
-					if (!festivalTasks.isEmpty()) {
-						Task<Integer> task = festivalTasks.poll();
-						new Thread(task).start();
+					try {
+						if (!festivalTasks.isEmpty()&&get()==0) {
+							Task<Integer> task = festivalTasks.poll();
+							new Thread(task).start();
+						}
+					} catch (InterruptedException | ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
 			};
@@ -411,10 +383,11 @@ public class Main extends Application implements MainInterface {
 	/**
 	 * Creates a new process of Festival that says a word
 	 * 
-	 * @param speed
-	 * @param words
+	 * @param speed list of speeds of the words being said
+	 * @param voiceType voice to use (kal_diphone or akl_nz_jdt_diphone)
+	 * @param words list of words to be said
 	 */
-	public void sayWord(final int[] speed, final String voiceType, final String... words) {
+	public void sayWord(final int speed, final String voiceType, final String... words) {
 		festivalService.setVoice(voiceType);
 		festivalService.setWordsToList(speed, words);
 		if (!festivalTasks.isEmpty()) {
@@ -427,7 +400,7 @@ public class Main extends Application implements MainInterface {
 	/**
 	 * Called by scene controller to update the main application
 	 * 
-	 * @param sc
+	 * @param mue ModelUpdateEvent
 	 */
 	public void update(ModelUpdateEvent mue) {
 		// Game must be updated

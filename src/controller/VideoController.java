@@ -10,7 +10,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-
+/**
+ * A view-controller that is bound to the video_layout fxml
+ * @author Mohan Cao
+ * @author Ryan MacMillan
+ */
 public class VideoController extends SceneController {
 
 	@FXML

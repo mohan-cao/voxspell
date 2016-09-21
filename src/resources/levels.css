@@ -1,22 +1,26 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+* {
+	-fx-background-color:#bbcef0;
+}
 .button {
-	-fx-background-color:#fff;
-	-fx-border-color:#000;
+	-fx-background-color:#eff3ff;
 	-fx-border-radius:5px;
 }
 .button:hover {
-	-fx-background-color:#eee;
+	-fx-background-color:#dcefff;
 }
 .button:pressed {
-	-fx-background-color:#999;
+	-fx-background-color:#77aaee;
 }
 .titled-pane > .title:hover {
-	-fx-background-color:#eee;
+	-fx-background-color:#dcefff;
 }
 .titled-pane > .title {
-	-fx-background-color: #fff;
+	-fx-background-color:#eff3ff;
 }
-
+.titled-pane > .title:pressed {
+	-fx-background-color:#77aaee;
+}
 .titled-pane:focused > .title {
 	-fx-color: -fx-focus-color;
 }

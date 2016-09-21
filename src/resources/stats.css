@@ -1,0 +1,33 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.bluebackground {
+	-fx-background-color:linear-gradient(from 50% 0% to 50% 100%, #99aed0 0%, #dceeff 15%);
+}
+.darkbluebackground {
+	-fx-background-color:#99aed0;
+}
+.button {
+	-fx-background-color:#eff3ff;
+	-fx-border-radius:5px;
+}
+.button:hover {
+	-fx-background-color:#dcefff;
+}
+.button:pressed {
+	-fx-background-color:#ccdeff;
+}
+.combo-box {
+	-fx-background-color:#eff3ff;
+}
+.combo-box:hover {
+	-fx-background-color:#dcefff;
+}
+.combo-box:pressed {
+	-fx-background-color:#ccdeff;
+}
+.bar-chart .chart-plot-background {
+	-fx-background-color:transparent;
+	-fx-horizontal-grid-lines-visible:0;
+	-fx-vertical-grid-lines-visible:0;
+	-fx-horizontal-zero-line-visible:0;
+	-fx-vertical-zero-line-visible:0;
+}

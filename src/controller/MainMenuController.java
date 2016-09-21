@@ -3,7 +3,11 @@ package controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-
+/**
+ * A view-controller that is bound to the levels_layout fxml
+ * @author Mohan Cao
+ * @author Ryan MacMillan
+ */
 public class MainMenuController extends SceneController{
 	@FXML private Button nQuizBtn;
 	@FXML private Button vStatsBtn;

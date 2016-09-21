@@ -1,0 +1,56 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.bluebackground {
+	-fx-background-color:#bbcef0;
+}
+.darkbluebackground {
+	-fx-background-color:linear-gradient(from 50% 0% to 50% 100%, #99aed0 75%, transparent 100%);
+}
+.darkcenterstage{
+	-fx-background-color:radial-gradient(focus-angle 0, focus-distance 0%, center 50% 50%, radius 50%, white 25%, transparent);
+}
+.button {
+	-fx-background-color:#eff3ff;
+	-fx-border-radius:5px;
+}
+.button:hover {
+	-fx-background-color:#dcefff;
+}
+.button:pressed {
+	-fx-background-color:#ccdeff;
+}
+.upperbtn {
+	-fx-background-color:#fff;
+	-fx-border-radius: 20 20 0 0;
+	-fx-background-radius: 20 20 0 0;
+}
+.upperbtn:hover {
+	-fx-background-color:#eee;
+}
+.upperbtn:pressed {
+	-fx-background-color:#999;
+}
+.lowerbtn {
+	-fx-background-color:#fff;
+	-fx-border-radius: 0 0 20 20;
+	-fx-background-radius: 0 0 20 20;
+}
+.lowerbtn:hover {
+	-fx-background-color:#eee;
+}
+.lowerbtn:pressed {
+	-fx-background-color:#999;
+}
+.text-area .content{
+	-fx-background-color:#fff;
+	-fx-background-radius:5;
+}
+.progress-bar {
+	-fx-focus-color: transparent;
+}
+.progress-bar > .track {
+	-fx-background-color: white;
+}
+.progress-bar > .bar {
+    -fx-background-insets: 1 1 2 1;
+    -fx-padding: 0.20em;
+}

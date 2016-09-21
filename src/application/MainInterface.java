@@ -2,7 +2,11 @@ package application;
 import java.util.Collection;
 
 import javafx.stage.Stage;
-
+/**
+ * Interface representing the main application model
+ * @author Mohan Cao
+ *
+ */
 public interface MainInterface {
 	public static final String STATS_PATH = System.getProperty("user.home")+"/.user/stats.ser";
 	/**
@@ -52,9 +56,9 @@ public interface MainInterface {
 	public void tell(String msg, Object... objects);
 	/**
 	 * Says word in festival
-	 * @param is Sequence of speeds
+	 * @param i speed
 	 * @param string Sequence of strings
 	 */
-	public void sayWord(int[] is, String voice, String... string);
+	public void sayWord(int i, String voice, String... string);
 	
 }

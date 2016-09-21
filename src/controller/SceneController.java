@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 
 /**
  * SceneController
- * Controller-View skeleton for the MVC application
+ * A view-controller skeleton for the MVC application
  * 
  * Calls updates to the model via the MainInterface and is notified by onModelChange()
  * 

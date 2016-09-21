@@ -74,7 +74,7 @@ public class StatisticsModel {
 	}
 	/**
 	 * Gets session stats.
-	 * @return StoredStats
+	 * @return Session StoredStats
 	 */
 	public StoredStats getSessionStats(){
 		return sessionStats;
@@ -96,7 +96,7 @@ public class StatisticsModel {
 	}
 	/**
 	 * Gets global stats
-	 * @return
+	 * @return Global StoredStats
 	 */
 	public StoredStats getGlobalStats(){
 		return (globalStats!=null)?globalStats:null;

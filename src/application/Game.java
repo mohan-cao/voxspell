@@ -28,7 +28,7 @@ import resources.StoredStats.Type;
  */
 public class Game {
 	public static final int WORDS_NUM = 10;
-	public static final String WORDLIST = "spelling-lists.txt";
+	public static final String WORDLIST = "NZCER-spelling-lists.txt";
 	public static final int SAY_SPEED_INTRO = 1;
 	public static final int SAY_SPEED_DEFAULT = 1;
 	public static final int SAY_SPEED_SLOW = 2;
@@ -81,19 +81,21 @@ public class Game {
 	}
 	/**
 	 * Toggles from kal_diphone voice to akl_nz_jdt_diphone or vice versa
-	 * @author Ryan Macmillan
+	 * @author Ryan MacMillan
 	 */
 	public void changeVoice(){
 		if(voiceType.equals("kal_diphone")){
 			voiceType = "akl_nz_jdt_diphone";
+			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Now using auckland new zealand jdt diphone");
 		}
 		else {
 			voiceType = "kal_diphone";
+			main.sayWord(SAY_SPEED_DEFAULT, voiceType, "Now using "+voiceType.replace("_", " "));
 		}
 	}
 	/**
 	 * Returns voice type
-	 * @return
+	 * @return voice string
 	 */
 	public String getVoice(){
 		final String voice = voiceType;
@@ -101,7 +103,7 @@ public class Game {
 	}
 	/**
 	 * Get current level.
-	 * @return Mohan Cao
+	 * @return level
 	 */
 	public int level() {
 		return _level;
@@ -131,7 +133,7 @@ public class Game {
 					_level = Integer.parseInt(line);
 					line = br.readLine();
 					while(!line.startsWith("%Level ")){
-						wordList.add(line);
+						wordList.add(line.trim());
 						line = br.readLine();
 					}
 					break;
@@ -154,7 +156,7 @@ public class Game {
 	/**
 	 * Starts the game with option for practice mode (review)
 	 * @param practice review -> true
-	 * @author Mohan Cao (Assignment 2)
+	 * @author Mohan Cao
 	 */
 	public void startGame(boolean practice){
 		_correct=0;
@@ -184,7 +186,8 @@ public class Game {
 		}
 		if(!wordList.isEmpty()){
 				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
-				main.sayWord(new int[]{SAY_SPEED_INTRO,SAY_SPEED_DEFAULT},voiceType,"Please spell the spoken words.",wordList.get(0));
+				main.sayWord(SAY_SPEED_INTRO,voiceType,"Please spell the spoken words.");
+				main.sayWord(SAY_SPEED_DEFAULT,voiceType,wordList.get(0));
 		}
 		//set faulted=false for first word
 		main.tell("setProgress",0d);
@@ -194,11 +197,11 @@ public class Game {
 	
 	/**
 	 * Repeat the word using festival
-	 * @author Ryan Macmillan
+	 * @author Ryan MacMillan
 	 */
 	public void repeatWord(){
 		if(!gameEnded){
-		main.sayWord(new int[]{SAY_SPEED_DEFAULT}, voiceType, wordList.get(0));
+		main.sayWord(SAY_SPEED_DEFAULT, voiceType, wordList.get(0));
 		}
 	}
 	
@@ -224,7 +227,7 @@ public class Game {
 	/**
 	 * Check word against game logic
 	 * @param word
-	 * @author Mohan Cao (Assignment 2)
+	 * @author Mohan Cao
 	 */
 	public void submitWord(String word){
 		if(!gameEnded){
@@ -232,6 +235,7 @@ public class Game {
 			boolean prev2Faulted = prevFaulted;
 			prevFaulted = faulted;
 			String testWord = wordList.get(0);
+			//mark as faulted if word is wrong
 			faulted=!word.toLowerCase().equals(testWord.toLowerCase());
 			if(!faulted&&!prevFaulted){
 				//mastered
@@ -247,8 +251,8 @@ public class Game {
 				//faulted once => set faulted
 				main.tell("faultedWord",testWord);
 				speed = SAY_SPEED_SLOW;
-				main.sayWord(new int[]{speed},voiceType, testWord);
-				main.sayWord(new int[]{speed},voiceType, "...");
+				main.sayWord(speed,voiceType, testWord);
+				main.sayWord(speed,voiceType, "The word is");
 			}else if(!faulted&&prevFaulted){
 				//correct after faulted => store faulted
 				main.tell("masteredWord",testWord);
@@ -259,8 +263,8 @@ public class Game {
 				//give one more chance in review, set speed to very slow
 				main.tell("lastChanceWord",testWord);
 				speed = SAY_SPEED_VERYSLOW;
-				main.sayWord(new int[]{speed},voiceType, testWord);
-				main.sayWord(new int[]{speed},voiceType, "...");
+				main.sayWord(speed,voiceType, testWord);
+				main.sayWord(speed,voiceType, "The word is");
 			}else{
 				//faulted twice => failed
 				main.tell("failedWord",testWord);
@@ -270,7 +274,8 @@ public class Game {
 				_incorrect++;
 			}
 			if(wordList.size()!=0){
-				main.sayWord(new int[]{speed},voiceType, wordList.get(0));
+				main.sayWord(speed,voiceType, wordList.get(0));
+				System.out.println(wordList.get(0));
 			}else{
 				//end game
 				if(prevFaulted||faulted||prev2Faulted){

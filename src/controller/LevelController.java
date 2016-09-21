@@ -11,6 +11,11 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
+/**
+ * A view-controller that is bound to the levels_layout fxml
+ * @author Mohan Cao
+ * @author Ryan MacMillan
+ */
 public class LevelController extends SceneController {
 	@FXML private Accordion levelAccordion;
 	@FXML private boolean review;
@@ -36,7 +41,7 @@ public class LevelController extends SceneController {
 	@FXML public void initialize(){}
 	/**
 	 * Quit to main menu button
-	 * @param me
+	 * @param me MouseEvent
 	 */
 	@FXML
 	public void quitToMainMenu(MouseEvent me){
@@ -44,7 +49,7 @@ public class LevelController extends SceneController {
 	}
 	/**
 	 * Get the current actively selected level from all TitledPanes
-	 * @return
+	 * @return level of active pane
 	 */
 	public Integer getLevelSelected(){
 		return ((LevelPane)levelAccordion.getExpandedPane()).getLevel();

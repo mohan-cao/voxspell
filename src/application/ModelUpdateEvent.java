@@ -219,14 +219,14 @@ public class ModelUpdateEvent {
 	}
 	/**
 	 * Sets the game to the MainController's game
-	 * @param game
+	 * @param game Game
 	 */
 	public void setGame(Game game){
 		_game = game;
 	}
 	/**
 	 * Gets the updated game.
-	 * @return
+	 * @return Game
 	 */
 	public Game getUpdatedGame(){
 		return _game;
@@ -242,7 +242,7 @@ public class ModelUpdateEvent {
 }
 /**
  * Empty class representing a game update event.
- * @author mohancao
+ * @author Mohan Cao
  *
  */
 class GameUpdater extends SceneController {

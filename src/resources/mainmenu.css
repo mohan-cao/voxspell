@@ -1,10 +1,24 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.bluebackground {
+	-fx-background-color:#eff3ff;
+}
 .button {
-	-fx-background-color:#fff;
+	-fx-background-color:#eff3ff;
 }
 .button:hover {
-	-fx-background-color:#eee;
+	-fx-background-color:#dcefff;
 }
 .button:pressed {
-	-fx-background-color:#999;
+	-fx-background-color:#ccdeff;
+}
+.progress-bar {
+	-fx-focus-color: transparent;
+	-fx-accent: #dfe3ef;
+}
+.progress-bar > .track {
+	-fx-background-color: transparent;
+}
+.progress-bar > .bar {
+    -fx-background-insets: 1 1 1 1;
+    -fx-padding: 0.20em;
 }

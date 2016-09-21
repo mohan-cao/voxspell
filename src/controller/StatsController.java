@@ -21,7 +21,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import resources.StoredStats;
 import resources.StoredStats.Type;
-
+/**
+ * 
+ * @author Mohan Cao
+ *
+ */
 public class StatsController extends SceneController{
     @FXML private BarChart<String, Number> barChartView;
     @FXML private Button mainMenuBtn;
@@ -33,7 +37,7 @@ public class StatsController extends SceneController{
 	 */
 	@FXML
 	public void initialize(){
-		barChartView.getYAxis().setLabel("Frequency");
+		barChartView.getYAxis().setLabel("Percentage");
 		statsSelection.getItems().addAll("Global statistics", "Session statistics");
 		statsSelection.getSelectionModel().select(1);
 		statsSelection.setEditable(false);
@@ -60,8 +64,8 @@ public class StatsController extends SceneController{
 		application.requestSceneChange("mainMenu");
 	}
 	/**
-	 * Listener for clear statistics button
-	 * @param me
+	 * Listener for clear statistics button to clear statistics
+	 * @param me MouseEvent
 	 */
 	@FXML
 	public void clearStats(MouseEvent me){
@@ -98,10 +102,15 @@ public class StatsController extends SceneController{
 		barChartView.getData().clear();
 		statsTextArea.clear();
 		statsTextArea.layout();
+		int mastered=stats.getTotalStatsOfType(Type.MASTERED);
+		int faulted=stats.getTotalStatsOfType(Type.FAULTED);
+		int failed=stats.getTotalStatsOfType(Type.FAILED);
+		int total = mastered+faulted+failed;
+		if(total==0){total=1;}
 		XYChart.Series<String, Number> series1 = new XYChart.Series<>();
-		XYChart.Data<String,Number> masteredData = new XYChart.Data<String,Number>("Total Mastered", stats.getTotalStatsOfType(Type.MASTERED));
-		XYChart.Data<String,Number> faultedData = new XYChart.Data<String,Number>("Total Faulted", stats.getTotalStatsOfType(Type.FAULTED));
-		XYChart.Data<String,Number> failedData = new XYChart.Data<String,Number>("Total Failed", stats.getTotalStatsOfType(Type.FAILED));
+		XYChart.Data<String,Number> masteredData = new XYChart.Data<String,Number>("Total Mastered", mastered*100/(double)total);
+		XYChart.Data<String,Number> faultedData = new XYChart.Data<String,Number>("Total Faulted", faulted*100/(double)total);
+		XYChart.Data<String,Number> failedData = new XYChart.Data<String,Number>("Total Failed", failed*100/(double)total);
 		series1.getData().add(masteredData);
 		series1.getData().add(faultedData);
 		series1.getData().add(failedData);
@@ -142,7 +151,6 @@ public class StatsController extends SceneController{
 	
 	@Override
 	public void onModelChange(String notificationString, Object... objectParameters) {
-		// TODO Auto-generated method stub
 		switch(notificationString){
 		case "globalStatsLoaded":
 			statsChange((StoredStats)objectParameters[0]);
