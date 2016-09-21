@@ -275,7 +275,6 @@ public class Game {
 			}
 			if(wordList.size()!=0){
 				main.sayWord(speed,voiceType, wordList.get(0));
-				System.out.println(wordList.get(0));
 			}else{
 				//end game
 				if(prevFaulted||faulted||prev2Faulted){
