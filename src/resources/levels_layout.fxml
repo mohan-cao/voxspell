@@ -26,7 +26,7 @@
          <children>
             <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="300.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
                <content>
-                  <Accordion fx:id="levelAccordion">
+                  <Accordion fx:id="levelAccordion" style="-fx-background-color: transparent;">
                      <panes>
                         <TitledPane animated="false" styleClass="hbox-titledpane" text="level 1">
                            <content>

@@ -2,6 +2,12 @@
 * {
 	-fx-background-color:#bbcef0;
 }
+.scroll-pane > .scroll-bar > *{
+	-fx-background-color:#fff;
+}
+.scroll-pane > .scroll-bar > .thumb{
+	-fx-background-color:#bbcef0;
+}
 .button {
 	-fx-background-color:#eff3ff;
 	-fx-border-radius:5px;
