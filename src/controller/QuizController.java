@@ -107,6 +107,10 @@ public class QuizController extends SceneController{
 	public void btnVideoReward(MouseEvent me){
 		application.update(new ModelUpdateEvent(this, "videoReward"));
 	}
+	@FXML
+	public void btnSpeedyReward(MouseEvent me){
+		application.update(new ModelUpdateEvent(this,"speedyReward"));
+	}
 	/**
 	 * Validates input before sending it to the marking algorithm
 	 * @author Mohan Cao

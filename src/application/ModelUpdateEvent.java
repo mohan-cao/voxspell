@@ -98,7 +98,9 @@ public class ModelUpdateEvent {
 				VideoController controller = screenFXMLs.get("videoReward").getController();
 				_main.requestSceneChange("videoReward",newWindow);
 				controller.setApplication(_main);
-				controller.init(null);
+				String[] init = new String[1];
+				init[0] = "videoReward";
+				controller.init(init);
 				newWindow.setOnCloseRequest(event->{
 						controller.cleanup();
 				});
@@ -106,6 +108,23 @@ public class ModelUpdateEvent {
 			newWindow.setResizable(false);
 			newWindow.show();
 			break;
+		case "speedyReward":
+			newWindow = new Stage();
+			if(screens.containsKey("videoReward")){
+				VideoController controller = screenFXMLs.get("videoReward").getController();
+				_main.requestSceneChange("videoReward",newWindow);
+				controller.setApplication(_main);
+				String[] init = new String[1];
+				init[0] = "speedyReward";
+				controller.init(init);
+				newWindow.setOnCloseRequest(event->{
+						controller.cleanup();
+				});
+			}
+			newWindow.setResizable(false);
+			newWindow.show();
+			break;
+			
 		case "changeVoice_onClick":
 			_game.changeVoice();
 			break;
@@ -205,16 +224,21 @@ public class ModelUpdateEvent {
 	 */
 	public void updateFromVideoController(){
 		switch(_message){
-		case "requestVideo":
+		case "speedyReward":
 			try {
 				String home = System.getProperty("user.home");
 				File videoFile = new File(home + "/.user/SpedUpReward.mp4");
 				URL url = videoFile.toURI().toURL();
 				Media media = new Media(url.toString());
-				_sc.onModelChange("videoReady", media);
+				_sc.onModelChange("speedyReward", media);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
+			break;
+		case "requestVideo":
+			URL url = getClass().getClassLoader().getResource("resources/big_buck_bunny_1_minute.mp4");
+			Media media = new Media(url.toString());
+			_sc.onModelChange("videoReady", media);
 			break;
 		}
 	}
