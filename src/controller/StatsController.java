@@ -22,7 +22,8 @@ import javafx.scene.input.MouseEvent;
 import resources.StoredStats;
 import resources.StoredStats.Type;
 /**
- * 
+ *
+ * A view-controller that is bound to the stats_layout fxml
  * @author Mohan Cao
  *
  */

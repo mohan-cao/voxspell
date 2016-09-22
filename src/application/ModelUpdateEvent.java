@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import controller.IntroController;
 import controller.LevelController;
 import controller.SceneController;
 import controller.VideoController;
@@ -217,6 +218,23 @@ public class ModelUpdateEvent {
 			break;
 		}
 	}
+	public void updateFromIntroController(){
+		IntroController ic = (IntroController) _sc;
+		switch(_message){
+		case "requestLevels":
+			_main.tell("levelsLoaded",1,2,3,4,5,6,7,8,9,10);
+			break;
+		case "unlockLevels":
+			for(int i=1;i<=ic.getLevelsToUnlock();i++){
+			_statsModel.getSessionStats().unlockLevel(i);
+			}
+			System.out.print("unlocked");
+			_main.requestSceneChange("mainMenu");
+			break;
+		}
+	}
+	
+	
 	/**
 	 * Sets the game to the MainController's game
 	 * @param game Game

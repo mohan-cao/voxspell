@@ -19,6 +19,7 @@ public class StatisticsModel {
 	private StoredStats sessionStats;
 	private StoredStats globalStats;
 	private MainInterface application;
+	private boolean _isFirstTime;
 	/**
 	 * Create new Statistics model that is not linked to a main interface.
 	 * You will have to manually save the session data later, and you cannot use global stats.
@@ -36,6 +37,7 @@ public class StatisticsModel {
 		//initiate session stats and main interface
 		sessionStats = new StoredStats();
 		application = main;
+		_isFirstTime = false;
 		//create new stats file if it does not exist
 		File file = new File(STATS_PATH);
 		if(!file.exists()){
@@ -46,6 +48,7 @@ public class StatisticsModel {
 				oos.writeObject(new StoredStats());
 				oos.close();
 				fo.close();
+				_isFirstTime = true;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -61,6 +64,9 @@ public class StatisticsModel {
 				globalStats = new StoredStats();
 			}
 		}
+	}
+	public boolean isFirstTime(){
+		return _isFirstTime;
 	}
 	/**
 	 * Ends session.

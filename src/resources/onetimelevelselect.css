@@ -1,0 +1,57 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.bluebackground {
+	-fx-background-color:#bbcef0;
+}
+.scroll-pane > .scroll-bar > *{
+	-fx-background-color:#fff;
+}
+.scroll-pane > .scroll-bar > .thumb{
+	-fx-background-color:#bbcef0;
+}
+.button {
+	-fx-background-color:#eff3ff;
+	-fx-border-radius:5px;
+}
+.button:hover {
+	-fx-background-color:#dcefff;
+}
+.button:pressed {
+	-fx-background-color:#77aaee;
+}
+.titled-pane > .title {
+	-fx-background-color:#eff3ff;
+}
+.titled-pane:focused > .title {
+	-fx-color: -fx-focus-color;
+}
+
+.titled-pane > .title > .arrow-button {
+	-fx-background-color: null;
+	-fx-background-insets: 0;
+	-fx-background-radius: 0;
+}
+
+.titled-pane > .title > .arrow-button .arrow {
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
+	-fx-padding: 0.25em 0.3125em 0.25em 0.3125em; /* 3 3.75 3 3.75 */
+}
+
+.titled-pane > *.content {
+	-fx-background-color:transparent;
+	-fx-padding: 0.167em;
+	-fx-border-insets: 0;
+ }
+ .titled-pane > *.content{
+ 	-fx-border-color:transparent;
+ 	-fx-border-insets:0;
+ }
+ .combo-box {
+	-fx-background-color:#eff3ff;
+}
+.combo-box:hover {
+	-fx-background-color:#dcefff;
+}
+.combo-box:pressed {
+	-fx-background-color:#ccdeff;
+}

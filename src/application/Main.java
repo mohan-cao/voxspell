@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 
+import controller.IntroController;
 import controller.LevelController;
 import controller.QuizController;
 import controller.SceneController;
@@ -58,11 +59,14 @@ public class Main extends Application implements MainInterface {
 	private Game game;
 	private Queue<Task<Integer>> festivalTasks;
 	private FestivalService festivalService;
+	private boolean _firstTimeRun;
 	Stage _stage;
 	{
 		screens = new HashMap<String, Scene>();
 		screenFXMLs = new HashMap<String, FXMLLoader>();
+		_firstTimeRun = false;
 		statsModel = new StatisticsModel(this);
+		_firstTimeRun = statsModel.isFirstTime();
 		festivalService = new FestivalService();
 		festivalTasks = new LinkedList<Task<Integer>>();
 	}
@@ -74,7 +78,11 @@ public class Main extends Application implements MainInterface {
 		setupVideoFile();
 		try {
 			primaryStage.setTitle("VoxSpell v1.0.0");
-			requestSceneChange("mainMenu");
+			if(_firstTimeRun){
+				requestSceneChange("firstTime");
+			}else{
+				requestSceneChange("mainMenu");
+			}
 			primaryStage.show();
 
 		} catch (Exception e) {
@@ -126,7 +134,6 @@ public class Main extends Application implements MainInterface {
 		}
 		return false;
 	}
-
 	/**
 	 * Moves video to ~/.user. Uses FFMPEG to speed up video by 4x
 	 * @author Ryan MacMillan
@@ -418,6 +425,8 @@ public class Main extends Application implements MainInterface {
 			mue.updateFromLevelController();
 		} else if (mue.getControllerClass().equals(VideoController.class)) {
 			mue.updateFromVideoController();
+		} else if (mue.getControllerClass().equals(IntroController.class)){
+			mue.updateFromIntroController();
 		}
 	}
 
