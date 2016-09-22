@@ -57,7 +57,12 @@ public class VideoController extends SceneController {
 		
 		// The video controller acts as both a controller and a view as it has both "update" components
 		// and "listener" components
-		application.update(new ModelUpdateEvent(this, "requestVideo"));
+		if (args[0].equals("videoReward")){
+			application.update(new ModelUpdateEvent(this, "requestVideo"));
+		}
+		else if (args[0].equals("speedyReward")){
+			application.update(new ModelUpdateEvent(this, "speedyReward"));
+		}
 	}
 
 	public void cleanup() {
@@ -67,22 +72,30 @@ public class VideoController extends SceneController {
 		// Model has changed (video is now ready), so components need to be loaded
 		switch(notificationString){
 		case "videoReady":
-			if(objectsParameters[0]==null){System.err.println("can't find resource");return;}
-			Media media = (Media) objectsParameters[0];
-			try{
-				mediaPlayer = new MediaPlayer(media);
-			}catch(MediaException me){
-				me.printStackTrace();
-			}
+			setupPlayVideo(objectsParameters[0]);
 			
-			videoView.setMediaPlayer(mediaPlayer);
+			break;
+		case "speedyReward":
+			setupPlayVideo(objectsParameters[0]);
 			
-			DoubleProperty widthProperty = videoView.fitWidthProperty();
-			widthProperty.bind(Bindings.selectDouble(videoView.parentProperty(), "width"));
-			videoView.setPreserveRatio(true);
-			mediaPlayer.play();
 			break;
 		}
 		
+	}
+	public void setupPlayVideo(Object arg){
+		if(arg==null){System.err.println("can't find resource");return;}
+		Media media = (Media) arg;
+		try{
+			mediaPlayer = new MediaPlayer(media);
+		}catch(MediaException me){
+			me.printStackTrace();
+		}
+		
+		videoView.setMediaPlayer(mediaPlayer);
+		
+		DoubleProperty widthProperty = videoView.fitWidthProperty();
+		widthProperty.bind(Bindings.selectDouble(videoView.parentProperty(), "width"));
+		videoView.setPreserveRatio(true);
+		mediaPlayer.play();
 	}
 }
