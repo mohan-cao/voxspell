@@ -184,6 +184,7 @@ b	 * Gets text area input
 	public void onModelChange(String signal, Object... objectParameters) {
 		switch(signal){
 		case "gameStartConfigure":
+			confirm.setDisable(false);
 			buttonPanel.setVisible(false);
 			wordTextArea.setDisable(false);
 			confirm.setText("Check");		
@@ -235,6 +236,15 @@ b	 * Gets text area input
 			break;
 		case "showRewards":
 			buttonPanel.setVisible(true);
+			break;
+		case "gameWin":
+			outputLabel.setText("You win!");
+			outputLabel.setTextFill(Paint.valueOf("#44a044"));
+			correctWordLabel.setText("You have achieved mastery in all levels.\nWell done.");
+			progress.setStyle("-fx-accent: lightgreen;");
+			progress.setProgress(1);
+			wordTextArea.setDisable(true);
+			confirm.setDisable(true);
 			break;
 		}
 	}

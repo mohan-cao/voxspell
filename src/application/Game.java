@@ -183,6 +183,10 @@ public class Game {
 			review=true; //reviewing words
 		}else{
 			getWordList();
+			if(wordList.size()==0){
+				main.tell("gameWin");
+				gameEnded=true;
+			}
 		}
 		if(!wordList.isEmpty()){
 				wordList = wordList.subList(0, (wordList.size()>=WORDS_NUM)?WORDS_NUM:wordList.size());
@@ -244,8 +248,10 @@ public class Game {
 				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1, _level);
 				_correct++;
 				// if review, remove from failedlist
+				if(review){
 				stats.getGlobalStats().setStats(Type.FAILED, testWord, 0);
 				stats.getSessionStats().setStats(Type.FAILED, testWord, 0);
+				}
 				wordList.remove(0);
 			}else if(faulted&&!prevFaulted){
 				//faulted once => set faulted
