@@ -167,7 +167,9 @@ public class Game {
 		if(practice){
 			HashSet<String> set = new HashSet<String>();
 			set.addAll(stats.getGlobalStats().getKeys(Type.FAILED,_level));
+			set.addAll(stats.getGlobalStats().getKeys(Type.FAULTED,_level));
 			set.addAll(stats.getSessionStats().getKeys(Type.FAILED,_level));
+			set.addAll(stats.getSessionStats().getKeys(Type.FAULTED,_level));
 			wordList.addAll(set);
 			if(wordList.size()==0){
 				Alert alert = new Alert(AlertType.ERROR);
@@ -247,10 +249,12 @@ public class Game {
 				faulted=false;
 				stats.getSessionStats().addStat(Type.MASTERED,testWord, 1, _level);
 				_correct++;
-				// if review, remove from failedlist
+				// if review, remove from failedlist and faultedlist
 				if(review){
 				stats.getGlobalStats().setStats(Type.FAILED, testWord, 0);
 				stats.getSessionStats().setStats(Type.FAILED, testWord, 0);
+				stats.getGlobalStats().setStats(Type.FAULTED, testWord, 0);
+				stats.getSessionStats().setStats(Type.FAULTED, testWord, 0);
 				}
 				wordList.remove(0);
 			}else if(faulted&&!prevFaulted){
