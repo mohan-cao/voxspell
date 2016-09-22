@@ -12,7 +12,7 @@ import java.util.Set;
  *
  */
 public class StoredStats implements Serializable{
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 1L;
 	private HashMap<String,Stats> _stats;
 	private HashMap<Integer,Boolean> _unlockedLevels;
 	/**

@@ -77,7 +77,7 @@ public class Main extends Application implements MainInterface {
 		buildMainScenes();
 		setupVideoFile();
 		try {
-			primaryStage.setTitle("VoxSpell v1.0.0");
+			primaryStage.setTitle("VoxSpell v1.0.1");
 			if(_firstTimeRun){
 				requestSceneChange("firstTime");
 			}else{
@@ -185,7 +185,6 @@ public class Main extends Application implements MainInterface {
 							alert.showAndWait();
 						}
 					} catch (InterruptedException | ExecutionException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

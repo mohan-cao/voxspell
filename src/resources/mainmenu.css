@@ -1,6 +1,6 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 .bluebackground {
-	-fx-background-color:#eff3ff;
+	-fx-background-color:linear-gradient(from 50% 0% to 50% 100%, #cfd3df 0%, #eff3ff 40%);
 }
 .button {
 	-fx-background-color:#eff3ff;
