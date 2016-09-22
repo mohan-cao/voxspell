@@ -312,11 +312,10 @@ public class Main extends Application implements MainInterface {
 		// propagate + notify currentController (view-controller) of changes
 		currentController.onModelChange(message, objectParams);
 	}
-
 	/**
 	 * Festival service class.
 	 * 
-	 * @author mohan0704
+	 * @author Mohan Cao
 	 *
 	 */
 	class FestivalService extends Service<Integer> {

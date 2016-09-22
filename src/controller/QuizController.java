@@ -16,7 +16,7 @@ import javafx.scene.paint.Paint;
 
 /**
  * A view-controller that is bound to the quiz_layout fxml
- * @author mohan0704
+ * @author Mohan Cao
  *
  */
 public class QuizController extends SceneController{
@@ -86,7 +86,7 @@ public class QuizController extends SceneController{
 	 */
 	@FXML
 	public void textAreaType(KeyEvent ke){
-		if(ke.getCharacter().matches("[^A-Za-z']")){
+		if(ke.getCharacter().matches("[^A-Za-z'\\s]")){
 			ke.consume();
 		}
 	}

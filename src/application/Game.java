@@ -132,7 +132,7 @@ public class Game {
 					line = line.split("%Level ")[1];
 					_level = Integer.parseInt(line);
 					line = br.readLine();
-					while(!line.startsWith("%Level ")){
+					while(line!=null&&!line.startsWith("%Level ")){
 						wordList.add(line.trim());
 						line = br.readLine();
 					}
@@ -283,7 +283,7 @@ public class Game {
 					main.tell("resetGame",_correct,(_correct+_incorrect));
 				}
 				
-				if((_correct/(double)(_incorrect+_correct))>=0.9){
+				if(!review&&(_correct/(double)(_incorrect+_correct))>=0.9){
 					stats.getSessionStats().unlockLevel(_level+1);
 					main.tell("showRewards");
 				}

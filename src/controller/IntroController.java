@@ -54,9 +54,11 @@ public class IntroController extends SceneController {
 	public void onModelChange(String notificationString, Object... objectsParameters) {
 		switch (notificationString) {
 		case "levelsLoaded":
-			for(Object obj : objectsParameters){
-				levels.getItems().add(new Level("Level "+obj,(int)obj));
+			int[] objs = (int[])objectsParameters[0];
+			for(int obj : objs){
+				levels.getItems().add(new Level("Level "+obj, obj));
 			}
+			levels.getSelectionModel().select(0);
 			break;
 		}
 	}

@@ -222,13 +222,17 @@ public class ModelUpdateEvent {
 		IntroController ic = (IntroController) _sc;
 		switch(_message){
 		case "requestLevels":
-			_main.tell("levelsLoaded",1,2,3,4,5,6,7,8,9,10);
+			int size = ApplicationUtility.evaluateMaxLevelInFile();
+			int[] levels = new int[size];
+			for(int i=0;i<size;i++){
+				levels[i] = i+1;
+			}
+			_main.tell("levelsLoaded",levels);
 			break;
 		case "unlockLevels":
 			for(int i=1;i<=ic.getLevelsToUnlock();i++){
 			_statsModel.getSessionStats().unlockLevel(i);
 			}
-			System.out.print("unlocked");
 			_main.requestSceneChange("mainMenu");
 			break;
 		}
